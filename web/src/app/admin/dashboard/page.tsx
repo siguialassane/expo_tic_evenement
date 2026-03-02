@@ -431,13 +431,13 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 text-right">
                             <button
                               onClick={() => openDetail("participant", p.id)}
-                              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-full transition-all"
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
                             >
-                              <Eye size={14} />
-                              Détail
+                              <Eye size={16} />
+                              Détails
                             </button>
                           </td>
                         </tr>
@@ -508,13 +508,13 @@ export default function AdminDashboard() {
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(e.created_at)}
                           </td>
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 text-right">
                             <button
                               onClick={() => openDetail("exposant", e.id)}
-                              className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-800 hover:bg-violet-50 px-3 py-1.5 rounded-full transition-all"
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors shadow-sm"
                             >
-                              <Eye size={14} />
-                              Détail
+                              <Eye size={16} />
+                              Détails
                             </button>
                           </td>
                         </tr>
@@ -586,13 +586,13 @@ export default function AdminDashboard() {
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(s.created_at)}
                           </td>
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 text-right">
                             <button
                               onClick={() => openDetail("sponsor", s.id)}
-                              className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 hover:text-amber-800 hover:bg-amber-50 px-3 py-1.5 rounded-full transition-all"
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-sm"
                             >
-                              <Eye size={14} />
-                              Détail
+                              <Eye size={16} />
+                              Détails
                             </button>
                           </td>
                         </tr>
@@ -606,59 +606,73 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* DETAIL DRAWER */}
+      {/* DETAIL MODAL */}
       {selectedDetail && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-12" style={{ zIndex: 9999 }}>
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelectedDetail(null)} />
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedDetail(null)} />
           {/* Panel */}
-          <div className="relative z-10 w-full max-w-lg h-full bg-white shadow-2xl overflow-y-auto flex flex-col">
+          <div className="relative z-10 w-full max-w-7xl max-h-[95vh] bg-slate-50 rounded-2xl shadow-2xl overflow-hidden flex flex-col mt-8 sm:mt-0">
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-[#0d1b2a] text-white px-6 py-5 flex items-center justify-between">
+            <div className="shrink-0 bg-[#0d1b2a] text-white px-8 py-5 flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-1">
-                  {selectedDetail.type === "participant" ? "Participant" : selectedDetail.type === "exposant" ? "Exposant" : "Sponsor"}
+                <p className="text-sm uppercase tracking-widest text-[#4cc9f0] font-bold mb-1">
+                  {selectedDetail.type === "participant" ? "Détails Participant" : selectedDetail.type === "exposant" ? "Détails Exposant" : "Détails Sponsor"}
                 </p>
-                <h2 className="text-lg font-bold">
+                <h2 className="text-2xl font-bold">
                   {selectedDetail.type === "participant"
                     ? `${(selectedDetail.data as Participant).first_name} ${(selectedDetail.data as Participant).last_name}`
                     : (selectedDetail.data as Exposant | Sponsor).company_name}
                 </h2>
               </div>
-              <button onClick={() => setSelectedDetail(null)} className="p-2 rounded-full hover:bg-white/10 transition-colors">
+              <button onClick={() => setSelectedDetail(null)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 hover:rotate-90 transition-all">
                 <X size={20} />
               </button>
             </div>
 
-            <div className="flex-1 px-6 py-6 space-y-6">
+            <div className="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-8">
               {/* PARTICIPANT DETAIL */}
               {selectedDetail.type === "participant" && (() => {
                 const p = selectedDetail.data as Participant;
                 return (
-                  <>
-                    <Section title="Informations personnelles">
-                      <Row icon={<UserCircle size={14} />} label="Nom complet" value={`${p.first_name} ${p.last_name}`} />
-                      <Row icon={<Mail size={14} />} label="Email" value={p.email} />
-                      <Row icon={<Phone size={14} />} label="Téléphone" value={p.phone} />
-                      <Row icon={<Briefcase size={14} />} label="Fonction" value={p.fonction ?? "—"} />
-                      <Row icon={<Building2 size={14} />} label="Entreprise" value={p.company ?? "—"} />
-                      <Row icon={<Package size={14} />} label="Secteur" value={p.sector ?? "—"} />
-                    </Section>
-                    <Section title="Participation">
-                      <div className="flex gap-3">
-                        {p.jour1 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 1 — 18 Sept.</span>}
-                        {p.jour2 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 2 — 19 Sept.</span>}
-                      </div>
-                    </Section>
-                    {p.source && (
-                      <Section title="Source">
-                        <p className="text-sm text-slate-600">{p.source}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                      <Section title="Informations personnelles">
+                        <Row icon={<UserCircle size={14} />} label="Nom complet" value={`${p.first_name} ${p.last_name}`} />
+                        <Row icon={<Mail size={14} />} label="Email" value={p.email} wide />
+                        <Row icon={<Phone size={14} />} label="Téléphone" value={p.phone} />
                       </Section>
-                    )}
-                    <Section title="Inscription">
-                      <Row icon={<Calendar size={14} />} label="Date" value={formatDate(p.created_at)} />
-                    </Section>
-                  </>
+                    </div>
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                      <Section title="Profil professionnel">
+                        <Row icon={<Briefcase size={14} />} label="Fonction" value={p.fonction ?? "—"} />
+                        <Row icon={<Building2 size={14} />} label="Entreprise" value={p.company ?? "—"} />
+                        <Row icon={<Package size={14} />} label="Secteur" value={p.sector ?? "—"} wide />
+                      </Section>
+                    </div>
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="col-span-1 md:col-span-1">
+                        <Section title="Participation">
+                          <div className="col-span-2 flex flex-wrap gap-2">
+                            {p.jour1 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 1 — 18 Sept.</span>}
+                            {p.jour2 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 2 — 19 Sept.</span>}
+                          </div>
+                        </Section>
+                      </div>
+                      <div className="col-span-1 md:col-span-1">
+                        {p.source && (
+                          <Section title="Source">
+                            <p className="col-span-2 text-sm text-slate-600">{p.source}</p>
+                          </Section>
+                        )}
+                      </div>
+                      <div className="col-span-1 md:col-span-1">
+                        <Section title="Inscription">
+                          <Row icon={<Calendar size={14} />} label="Date" value={formatDate(p.created_at)} />
+                        </Section>
+                      </div>
+                    </div>
+                  </div>
                 );
               })()}
 
@@ -667,48 +681,59 @@ export default function AdminDashboard() {
                 const e = selectedDetail.data as Exposant;
                 const opts = selectedDetail.options as ExposantOption[];
                 return (
-                  <>
-                    <Section title="Entreprise">
-                      <Row icon={<Building2 size={14} />} label="Entreprise" value={e.company_name} />
-                      <Row icon={<UserCircle size={14} />} label="Contact" value={e.contact_name} />
-                      <Row icon={<Mail size={14} />} label="Email" value={e.email} />
-                      <Row icon={<Phone size={14} />} label="Téléphone" value={e.phone} />
-                      <Row icon={<Package size={14} />} label="Secteur" value={e.sector ?? "—"} />
-                    </Section>
-                    <Section title="Stand & Options">
-                      <Row icon={<MapPin size={14} />} label="Type de stand" value={e.stand_type} />
-                      <Row icon={<DollarSign size={14} />} label="Prix du stand" value={formatCFA(e.stand_price)} />
-                      <Row label="B2B" value={e.want_b2b ? "Oui" : "Non"} />
-                      {opts.length > 0 && (
-                        <div className="mt-3">
-                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Options sélectionnées</p>
-                          <div className="rounded-lg border border-slate-100 overflow-hidden">
-                            {opts.map((o) => (
-                              <div key={o.id} className="flex justify-between items-center px-4 py-2.5 even:bg-slate-50">
-                                <span className="text-sm text-slate-700">{OPTION_LABELS[o.option_id] ?? o.option_id} × {o.quantity}</span>
-                                <span className="text-sm font-bold text-slate-900">{formatCFA(o.unit_price * o.quantity)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </Section>
-                    {e.description && (
-                      <Section title="Description / Activité">
-                        <p className="text-sm text-slate-600 leading-relaxed">{e.description}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100 col-span-1 lg:col-span-1">
+                      <Section title="Entreprise & Contact">
+                        <Row icon={<Building2 size={14} />} label="Entreprise" value={e.company_name} />
+                        <Row icon={<UserCircle size={14} />} label="Contact" value={e.contact_name} />
+                        <Row icon={<Mail size={14} />} label="Email" value={e.email} wide />
+                        <Row icon={<Phone size={14} />} label="Téléphone" value={e.phone} />
+                        <Row icon={<Package size={14} />} label="Secteur" value={e.sector ?? "—"} wide />
                       </Section>
-                    )}
-                    <Section title="Récapitulatif financier">
-                      <Row label="Options sous-total" value={formatCFA(e.options_total)} />
-                      <div className="border-t border-slate-200 mt-2 pt-2">
-                        <Row label="Total TTC" value={formatCFA(e.grand_total)} bold />
-                      </div>
-                    </Section>
-                    <Section title="Statut & Date">
-                      <Row label="Statut" value={STATUS_LABELS[e.status]?.label ?? e.status} />
-                      <Row icon={<Calendar size={14} />} label="Inscription" value={formatDate(e.created_at)} />
-                    </Section>
-                  </>
+                      <Section title="Statut & Inscription">
+                        <Row label="Statut" value={STATUS_LABELS[e.status]?.label ?? e.status} />
+                        <Row icon={<Calendar size={14} />} label="Date" value={formatDate(e.created_at)} />
+                      </Section>
+                    </div>
+
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100 col-span-1 lg:col-span-1">
+                      <Section title="Stand & Options">
+                        <Row icon={<MapPin size={14} />} label="Type de stand" value={e.stand_type} />
+                        <Row icon={<DollarSign size={14} />} label="Prix du stand" value={formatCFA(e.stand_price)} />
+                        <Row label="B2B (Rencontres dir.)" value={e.want_b2b ? "Oui" : "Non"} />
+                        
+                        {opts.length > 0 && (
+                          <div className="col-span-2 mt-2">
+                            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 pb-2 mb-3 border-b border-slate-100">Options sélectionnées</p>
+                            <div className="rounded-lg border border-slate-100 overflow-hidden text-sm">
+                              {opts.map((o) => (
+                                <div key={o.id} className="flex justify-between items-center px-3 py-2.5 bg-slate-50 border-b border-slate-100 last:border-0">
+                                  <span className="text-slate-600 text-sm">{OPTION_LABELS[o.option_id] ?? o.option_id} × <span className="font-bold">{o.quantity}</span></span>
+                                  <span className="font-bold text-slate-900 ml-4 shrink-0">{formatCFA(o.unit_price * o.quantity)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </Section>
+                      <Section title="Récapitulatif financier">
+                        <Row label="Sous-total Options" value={formatCFA(e.options_total)} />
+                        <Row label="TOTAL TTC" value={formatCFA(e.grand_total)} bold wide />
+                      </Section>
+                    </div>
+
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100 col-span-1 md:col-span-2 lg:col-span-1">
+                      {e.description ? (
+                        <Section title="Description / Activité">
+                          <p className="col-span-2 text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-lg">{e.description}</p>
+                        </Section>
+                      ) : (
+                        <Section title="Description / Activité">
+                          <p className="col-span-2 text-sm text-slate-400 italic">Aucune description fournie.</p>
+                        </Section>
+                      )}
+                    </div>
+                  </div>
                 );
               })()}
 
@@ -717,43 +742,47 @@ export default function AdminDashboard() {
                 const s = selectedDetail.data as Sponsor;
                 const opts = selectedDetail.options as SponsorOption[];
                 return (
-                  <>
-                    <Section title="Entreprise">
-                      <Row icon={<Building2 size={14} />} label="Entreprise" value={s.company_name} />
-                      <Row icon={<UserCircle size={14} />} label="Contact" value={s.contact_name} />
-                      <Row label="Fonction" value={s.fonction ?? "—"} />
-                      <Row icon={<Mail size={14} />} label="Email" value={s.email} />
-                      <Row icon={<Phone size={14} />} label="Téléphone" value={s.phone} />
-                      {s.website && <Row icon={<Globe size={14} />} label="Site web" value={s.website} />}
-                    </Section>
-                    <Section title="Pack & Options">
-                      <Row icon={<Package size={14} />} label="Pack" value={s.pack_type.toUpperCase()} />
-                      <Row icon={<DollarSign size={14} />} label="Prix du pack" value={formatCFA(s.pack_price)} />
-                      {opts.length > 0 && (
-                        <div className="mt-3">
-                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Options sélectionnées</p>
-                          <div className="rounded-lg border border-slate-100 overflow-hidden">
-                            {opts.map((o) => (
-                              <div key={o.id} className="flex justify-between items-center px-4 py-2.5 even:bg-slate-50">
-                                <span className="text-sm text-slate-700">{OPTION_LABELS[o.option_id] ?? o.option_id} × {o.quantity}</span>
-                                <span className="text-sm font-bold text-slate-900">{formatCFA(o.unit_price * o.quantity)}</span>
-                              </div>
-                            ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                      <Section title="Entreprise & Contact">
+                        <Row icon={<Building2 size={14} />} label="Entreprise" value={s.company_name} />
+                        <Row icon={<UserCircle size={14} />} label="Contact" value={s.contact_name} />
+                        <Row icon={<Briefcase size={14} />} label="Fonction" value={s.fonction ?? "—"} />
+                        <Row icon={<Mail size={14} />} label="Email" value={s.email} wide />
+                        <Row icon={<Phone size={14} />} label="Téléphone" value={s.phone} />
+                        {s.website && <Row icon={<Globe size={14} />} label="Site web" value={s.website} wide />}
+                      </Section>
+                      <Section title="Statut & Inscription">
+                        <Row label="Statut" value={STATUS_LABELS[s.status]?.label ?? s.status} />
+                        <Row icon={<Calendar size={14} />} label="Date" value={formatDate(s.created_at)} />
+                      </Section>
+                    </div>
+
+                    <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                      <Section title="Pack Sponsor & Options">
+                        <Row icon={<Package size={14} />} label="Pack choisi" value={s.pack_type.toUpperCase()} />
+                        <Row icon={<DollarSign size={14} />} label="Prix du pack" value={formatCFA(s.pack_price)} />
+                        
+                        {opts.length > 0 && (
+                          <div className="col-span-2 mt-2">
+                            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 pb-2 mb-3 border-b border-slate-100">Options sélectionnées</p>
+                            <div className="rounded-lg border border-slate-100 overflow-hidden text-sm">
+                              {opts.map((o) => (
+                                <div key={o.id} className="flex justify-between items-center px-3 py-2.5 bg-slate-50 border-b border-slate-100 last:border-0">
+                                  <span className="text-slate-600 text-sm">{OPTION_LABELS[o.option_id] ?? o.option_id} × <span className="font-bold">{o.quantity}</span></span>
+                                  <span className="font-bold text-slate-900 ml-4 shrink-0">{formatCFA(o.unit_price * o.quantity)}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </Section>
-                    <Section title="Récapitulatif financier">
-                      <Row label="Options sous-total" value={formatCFA(s.options_total)} />
-                      <div className="border-t border-slate-200 mt-2 pt-2">
-                        <Row label="Total TTC" value={formatCFA(s.grand_total)} bold />
-                      </div>
-                    </Section>
-                    <Section title="Statut & Date">
-                      <Row label="Statut" value={STATUS_LABELS[s.status]?.label ?? s.status} />
-                      <Row icon={<Calendar size={14} />} label="Inscription" value={formatDate(s.created_at)} />
-                    </Section>
-                  </>
+                        )}
+                      </Section>
+                      <Section title="Récapitulatif financier">
+                        <Row label="Sous-total Options" value={formatCFA(s.options_total)} />
+                        <Row label="TOTAL TTC" value={formatCFA(s.grand_total)} bold wide />
+                      </Section>
+                    </div>
+                  </div>
                 );
               })()}
             </div>
@@ -776,21 +805,36 @@ export default function AdminDashboard() {
 /* ── Helper sub-components ── */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div>
-      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pb-1 border-b border-slate-100">{title}</h3>
-      <div className="space-y-2.5">{children}</div>
+    <div className="space-y-1">
+      <h3 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 pb-2 mb-3 border-b border-slate-100">{title}</h3>
+      <div className="grid grid-cols-2 gap-x-8 gap-y-4">{children}</div>
     </div>
   );
 }
 
-function Row({ icon, label, value, bold }: { icon?: React.ReactNode; label: string; value: string; bold?: boolean }) {
+function Row({
+  icon, label, value, bold, wide,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  value: string;
+  bold?: boolean;
+  wide?: boolean;
+}) {
   return (
-    <div className="flex items-start justify-between gap-4">
-      <div className="flex items-center gap-1.5 text-xs text-slate-400 min-w-[120px] shrink-0">
-        {icon}
-        {label}
+    <div className={wide ? "col-span-2" : "col-span-1 min-w-0"}>
+      <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
+        {icon && <span className="shrink-0">{icon}</span>}
+        <span>{label}</span>
       </div>
-      <span className={`text-sm text-right break-all ${bold ? "font-extrabold text-slate-900" : "text-slate-700"}`}>{value}</span>
+      <p
+        className={`text-sm leading-snug ${
+          bold ? "font-extrabold text-slate-900 text-base" : "font-medium text-slate-800"
+        } ${wide ? "break-all" : "truncate"}`}
+        title={value}
+      >
+        {value}
+      </p>
     </div>
   );
 }
