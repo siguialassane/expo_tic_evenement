@@ -156,8 +156,10 @@ export default function SponsorRegister() {
     setSubmitting(true);
     setErrorMsg("");
     try {
-      // 1. Insert sponsor
-      const { data: inserted, error } = await supabase.from("sponsors").insert({
+      // 1. Insert sponsor (UUID généré côté client pour éviter un SELECT retour)
+      const sponsorId = crypto.randomUUID();
+      const { error } = await supabase.from("sponsors").insert({
+        id: sponsorId,
         company_name: company,
         contact_name: contact,
         fonction: fonction || null,
@@ -168,7 +170,7 @@ export default function SponsorRegister() {
         pack_price: selectedPackData?.price ?? 0,
         options_total: optionsTotal,
         grand_total: grandTotal,
-      }).select("id").single();
+      });
 
       if (error) {
         if (error.code === "23505") {
@@ -184,7 +186,7 @@ export default function SponsorRegister() {
       const optionsToInsert = OPTIONS
         .filter((o) => (quantities[o.id] ?? 0) > 0)
         .map((o) => ({
-          sponsor_id: inserted.id,
+          sponsor_id: sponsorId,
           option_id: o.id,
           quantity: quantities[o.id],
           unit_price: o.unitPrice,

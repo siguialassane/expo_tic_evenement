@@ -22,7 +22,7 @@ function emailShell(body: string): string {
       </div>
       <div style="padding:40px;">${body}</div>
       <div style="background:#f8f8f8;border-top:1px solid #e0e0e0;padding:20px 40px;">
-        <p style="margin:0;font-size:11px;color:#999999;line-height:1.7;">Cet email a &eacute;t&eacute; g&eacute;n&eacute;r&eacute; automatiquement. Merci de ne pas y r&eacute;pondre directement.<br>Pour toute question&nbsp;: <a href="mailto:galadespmeinfos@gmail.com" style="color:#0d1b2a;text-decoration:none;">galadespmeinfos@gmail.com</a></p>
+        <p style="margin:0;font-size:11px;color:#999999;line-height:1.7;">Cet email a &eacute;t&eacute; g&eacute;n&eacute;r&eacute; automatiquement. Merci de ne pas y r&eacute;pondre directement.<br>Pour toute question&nbsp;: <a href="mailto:commercial@differencegroup.info" style="color:#0d1b2a;text-decoration:none;">commercial@differencegroup.info</a></p>
       </div>
     </div>
   </div>`;

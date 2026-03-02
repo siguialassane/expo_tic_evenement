@@ -134,8 +134,10 @@ export default function ExhibitorRegister() {
     setSubmitting(true);
     setErrorMsg("");
     try {
-      // 1. Insert exposant
-      const { data: inserted, error } = await supabase.from("exposants").insert({
+      // 1. Insert exposant (UUID généré côté client pour éviter un SELECT retour)
+      const exposantId = crypto.randomUUID();
+      const { error } = await supabase.from("exposants").insert({
+        id: exposantId,
         company_name: company,
         contact_name: contact,
         email,
@@ -147,7 +149,7 @@ export default function ExhibitorRegister() {
         stand_price: selectedStandData?.price ?? 0,
         options_total: optionsTotal,
         grand_total: grandTotal,
-      }).select("id").single();
+      });
 
       if (error) {
         if (error.code === "23505") {
@@ -163,7 +165,7 @@ export default function ExhibitorRegister() {
       const optionsToInsert = OPTIONS
         .filter((o) => (quantities[o.id] ?? 0) > 0)
         .map((o) => ({
-          exposant_id: inserted.id,
+          exposant_id: exposantId,
           option_id: o.id,
           quantity: quantities[o.id],
           unit_price: o.unitPrice,

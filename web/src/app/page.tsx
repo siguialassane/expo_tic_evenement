@@ -36,9 +36,9 @@ export default function Home() {
   /* ---------- DATA ---------- */
   const stats = [
     { value: "5 000+", label: "Visiteurs attendus" },
-    { value: "100+", label: "Exposants & Start-ups" },
-    { value: "30+", label: "Conférences & Ateliers" },
-    { value: "2", label: "Jours d'immersion" },
+    { value: "4 packs", label: "Sponsoring disponibles" },
+    { value: "2 jours", label: "Conférences & Panels" },
+    { value: "100%", label: "Secteur TIC & Numérique" },
   ];
 
   const highlights = [
@@ -62,12 +62,12 @@ export default function Home() {
   ];
 
   const targets = [
-    "Professionnels des TIC et du Numérique",
+    "Opérateurs télécoms et fournisseurs de solutions TIC",
     "Chefs d'entreprises et Décideurs (CEO, DSI, CTO)",
-    "Start-ups et Porteurs de projets innovants",
-    "Investisseurs et Partenaires financiers",
-    "Étudiants et Chercheurs en technologies",
-    "Grand public passionné par l'innovation",
+    "Experts et consultants du secteur numérique",
+    "Start-ups et porteurs de projets innovants",
+    "Investisseurs et partenaires financiers",
+    "Décideurs publics et privés du secteur TIC",
   ];
 
   return (
@@ -172,14 +172,18 @@ export default function Home() {
                 Thème officiel 2026
               </motion.p>
 
-              <motion.h1 variants={fade} className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-4 sm:mb-6 max-w-4xl mx-auto">
-                La Tech au service de{" "}
-                <span className="text-primary">l'Innovation</span>
+              <motion.h1 variants={fade} className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] mb-3 sm:mb-4 max-w-4xl mx-auto">
+                L&apos;Intelligence Artificielle au service de{" "}
+                <span className="text-primary">la transformation des TIC</span>
               </motion.h1>
 
-              <motion.p variants={fade} className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2">
-                Le rendez-vous annuel des acteurs de la transformation digitale en Afrique de l'Ouest.
-                Conférences, expositions, networking B2B et concours d'innovation.
+              <motion.p variants={fade} className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto italic mb-2 sm:mb-3 px-2">
+                Enjeux, opportunités et perspectives pour les opérateurs
+              </motion.p>
+
+              <motion.p variants={fade} className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2">
+                Le grand rendez-vous des acteurs de la transformation numérique en Côte d&apos;Ivoire.
+                Conférences, expositions, networking B2B et rencontres opérateurs.
               </motion.p>
 
               {/* Date / Lieu / Visiteurs badges */}
@@ -194,7 +198,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
                   <Users size={16} className="text-primary shrink-0" />
-                  <span className="text-white text-sm font-semibold">5 000+ Visiteurs</span>
+                  <span className="text-white text-sm font-semibold">Secteur TIC & Numérique</span>
                 </div>
               </motion.div>
 
@@ -276,7 +280,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 { img: "/images/conference.jpg", title: "Conférences & Panels", desc: "Keynotes, tables rondes avec des leaders du secteur TIC africain et international." },
-                { img: "/images/exhibition.jpg", title: "Exposition Technologique", desc: "Plus de 100 stands présentant les dernières solutions et innovations." },
+                { img: "/images/exhibition.jpg", title: "Exposition Technologique", desc: "Des stands présentant les dernières solutions et innovations des acteurs TIC." },
                 { img: "/images/networking.jpg", title: "Networking & B2B", desc: "Rencontres qualifiées entre décideurs, investisseurs et porteurs de projets." },
               ].map((item, i) => (
                 <motion.div
@@ -362,8 +366,8 @@ export default function Home() {
                   {[
                     { time: "09:00", label: "Ateliers techniques et Masterclasses" },
                     { time: "11:00", label: "Rencontres B2B exclusives", bold: true },
-                    { time: "14:00", label: "Pitch des Start-ups & Concours d'innovation" },
-                    { time: "16:00", label: "Remise des prix et distinctions" },
+                    { time: "14:00", label: "Panels thématiques IA & transformation des TIC" },
+                    { time: "16:00", label: "Sessions B2B et rencontres opérateurs" },
                     { time: "17:00", label: "Cérémonie de clôture", bold: true },
                   ].map((e, i) => (
                     <div key={i} className="flex gap-4 items-start">
@@ -474,7 +478,7 @@ export default function Home() {
                     <Briefcase size={28} />
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Sponsor</h3>
-                  <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Associez votre image à l'événement et bénéficiez d'une visibilité maximale auprès de 5 000+ décideurs.</p>
+                  <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Associez votre image à l'événement et bénéficiez d'une visibilité maximale auprès des acteurs du secteur TIC.</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Dès 3M FCFA</span>
                     <span className="text-amber-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
@@ -536,13 +540,14 @@ export default function Home() {
                 />
                 <p className="text-sm text-slate-400">7 - 8 Mai 2026 — Sofitel Hôtel Ivoire, Abidjan</p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm">
-                <a href="mailto:contact@expotic.ci" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
-                  <Mail size={16} /> contact@expotic.ci
+              <div className="flex flex-col gap-2 text-sm">
+                <a href="mailto:commercial@differencegroup.info" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
+                  <Mail size={16} /> commercial@differencegroup.info
                 </a>
-                <a href="tel:+22500000000" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
-                  <Phone size={16} /> +225 00 00 00 00
+                <a href="tel:+2272722308348" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
+                  <Phone size={16} /> 27 22 30 83 48 &nbsp;/&nbsp; 05 65 17 36 63 &nbsp;/&nbsp; 07 47 51 51 62
                 </a>
+                <p className="text-slate-500 text-xs mt-1">Cocody deux plateaux vallon, Rue BURIDA &mdash; Abidjan</p>
               </div>
             </div>
             <div className="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
