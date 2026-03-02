@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, UserCircle, Check, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, UserCircle, Check, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/lib/supabase";
+import { sendParticipantConfirmation, notifyAdmin } from "@/lib/emails";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
@@ -64,6 +66,9 @@ export default function ParticipantRegister() {
   const [jour2, setJour2] = useState(true);
   const [source, setSource] = useState("");
   const [acceptCGU, setAcceptCGU] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function canContinue() {
     if (step === 0) return firstName.trim() && lastName.trim() && email.includes("@") && phone.trim();
@@ -71,15 +76,56 @@ export default function ParticipantRegister() {
     return true;
   }
 
-  function handleSubmit() {
-    const payload = {
-      firstName, lastName, email, phone,
-      company, fonction, sector,
-      jours: [jour1 && "Jour 1", jour2 && "Jour 2"].filter(Boolean),
-      source,
-    };
-    console.log("Participant registration:", payload);
-    alert("Votre inscription a bien été enregistrée. Un email de confirmation vous sera envoyé.");
+  async function handleSubmit() {
+    setSubmitting(true);
+    setErrorMsg("");
+    try {
+      // 1. Insert en BD
+      const { error } = await supabase.from("participants").insert({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone,
+        company: company || null,
+        fonction: fonction || null,
+        sector: sector || null,
+        jour1,
+        jour2,
+        source: source || null,
+      });
+      if (error) {
+        if (error.code === "23505") {
+          setErrorMsg("Cet email est déjà inscrit.");
+        } else {
+          setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+        }
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Email de confirmation au participant
+      const jours = [jour1 && "Jour 1 — 7 mai", jour2 && "Jour 2 — 8 mai"].filter(Boolean) as string[];
+      await sendParticipantConfirmation({ firstName, lastName, email, jours }).catch((err) => console.error("Email participant:", err));
+
+      // 3. Notification admin
+      await notifyAdmin("participant", {
+        "Prénom": firstName,
+        "Nom": lastName,
+        "Email": email,
+        "Téléphone": phone,
+        "Entreprise": company || "—",
+        "Fonction": fonction || "—",
+        "Secteur": sector || "—",
+        "Journées": jours.join(", "),
+        "Source": source || "—",
+      }).catch((err) => console.error("Email admin:", err));
+
+      setSubmitted(true);
+    } catch {
+      setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -130,6 +176,23 @@ export default function ParticipantRegister() {
           ))}
         </nav>
 
+        {/* SUCCESS SCREEN */}
+        {submitted ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
+              <CheckCircle2 size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-3">Inscription confirmée !</h2>
+            <p className="text-slate-500 max-w-md mx-auto mb-6">
+              Merci <strong>{firstName}</strong> ! Votre inscription à Abidjan Expo Tic 2026 est validée. Un email de confirmation vous a été envoyé à <strong>{email}</strong>.
+            </p>
+            <p className="text-sm text-slate-400 mb-8">Un QR code d'accès vous sera envoyé avant l'événement.</p>
+            <Link href="/">
+              <Button className="bg-blue-600 hover:bg-blue-700">Retour à l'accueil</Button>
+            </Link>
+          </motion.div>
+        ) : (
+        <>
         {/* STEP CONTENT */}
         <motion.div
           key={step}
@@ -326,11 +389,19 @@ export default function ParticipantRegister() {
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8 bg-blue-600 hover:bg-blue-700">
-              Confirmer l'inscription <Check size={16} />
+            <Button onClick={handleSubmit} disabled={submitting} className="gap-2 px-8 bg-blue-600 hover:bg-blue-700">
+              {submitting ? <><Loader2 size={16} className="animate-spin" /> Envoi en cours...</> : <>Confirmer l'inscription <Check size={16} /></>}
             </Button>
           )}
         </div>
+
+        {errorMsg && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+            {errorMsg}
+          </div>
+        )}
+        </>
+        )}
       </div>
     </div>
   );

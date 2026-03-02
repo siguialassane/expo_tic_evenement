@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Building2, Check, Plus, Minus, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Check, Plus, Minus, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/lib/supabase";
+import { sendExposantReview, notifyAdmin } from "@/lib/emails";
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -111,6 +113,9 @@ export default function ExhibitorRegister() {
   );
 
   const grandTotal = (selectedStandData?.price ?? 0) + optionsTotal;
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function updateQty(id: string, delta: number) {
     setQuantities((prev) => ({
@@ -125,17 +130,75 @@ export default function ExhibitorRegister() {
     return true;
   }
 
-  function handleSubmit() {
-    const payload = {
-      company, contact, email, phone, sector, description, wantB2B,
-      stand: selectedStand,
-      options: Object.fromEntries(
-        Object.entries(quantities).filter(([, v]) => v > 0)
-      ),
-      total: grandTotal,
-    };
-    console.log("Exhibitor registration:", payload);
-    alert("Votre réservation de stand a bien été enregistrée. Notre équipe vous contactera sous 48 h.");
+  async function handleSubmit() {
+    setSubmitting(true);
+    setErrorMsg("");
+    try {
+      // 1. Insert exposant
+      const { data: inserted, error } = await supabase.from("exposants").insert({
+        company_name: company,
+        contact_name: contact,
+        email,
+        phone,
+        sector,
+        description: description || null,
+        want_b2b: wantB2B,
+        stand_type: selectedStand,
+        stand_price: selectedStandData?.price ?? 0,
+        options_total: optionsTotal,
+        grand_total: grandTotal,
+      }).select("id").single();
+
+      if (error) {
+        if (error.code === "23505") {
+          setErrorMsg("Cet email est déjà inscrit comme exposant.");
+        } else {
+          setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+        }
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Insert options
+      const optionsToInsert = OPTIONS
+        .filter((o) => (quantities[o.id] ?? 0) > 0)
+        .map((o) => ({
+          exposant_id: inserted.id,
+          option_id: o.id,
+          quantity: quantities[o.id],
+          unit_price: o.unitPrice,
+        }));
+      if (optionsToInsert.length > 0) {
+        await supabase.from("exposant_options").insert(optionsToInsert);
+      }
+
+      // 3. Email à l'exposant (inscription en étude)
+      await sendExposantReview({
+        company,
+        contact,
+        email,
+        standSize: selectedStandData?.size ?? "",
+        total: formatCFA(grandTotal),
+      }).catch((err) => console.error("Email exposant:", err));
+
+      // 4. Notification admin
+      await notifyAdmin("exposant", {
+        "Entreprise": company,
+        "Contact": contact,
+        "Email": email,
+        "Téléphone": phone,
+        "Secteur": sector,
+        "Stand": selectedStandData?.size ?? "",
+        "B2B": wantB2B ? "Oui" : "Non",
+        "Total": formatCFA(grandTotal),
+      }).catch((err) => console.error("Email admin:", err));
+
+      setSubmitted(true);
+    } catch {
+      setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -186,6 +249,24 @@ export default function ExhibitorRegister() {
           ))}
         </nav>
 
+        {/* SUCCESS SCREEN */}
+        {submitted ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-violet-100 text-violet-600 mb-6">
+              <CheckCircle2 size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-3">Demande de stand enregistrée !</h2>
+            <p className="text-slate-500 max-w-md mx-auto mb-6">
+              Merci <strong>{contact}</strong> ! Votre demande pour <strong>{company}</strong> est en cours d'étude.
+              Un email de confirmation a été envoyé à <strong>{email}</strong>.
+            </p>
+            <p className="text-sm text-slate-400 mb-8">L'équipe Difference Group vous contactera sous 48 heures pour finaliser votre réservation.</p>
+            <Link href="/">
+              <Button className="bg-violet-600 hover:bg-violet-700">Retour à l'accueil</Button>
+            </Link>
+          </motion.div>
+        ) : (
+        <>
         {/* STEP CONTENT */}
         <motion.div
           key={step}
@@ -447,11 +528,19 @@ export default function ExhibitorRegister() {
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8 bg-violet-600 hover:bg-violet-700">
-              Confirmer la réservation <Check size={16} />
+            <Button onClick={handleSubmit} disabled={submitting} className="gap-2 px-8 bg-violet-600 hover:bg-violet-700">
+              {submitting ? <><Loader2 size={16} className="animate-spin" /> Envoi en cours...</> : <>Confirmer la réservation <Check size={16} /></>}
             </Button>
           )}
         </div>
+
+        {errorMsg && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+            {errorMsg}
+          </div>
+        )}
+        </>
+        )}
       </div>
     </div>
   );

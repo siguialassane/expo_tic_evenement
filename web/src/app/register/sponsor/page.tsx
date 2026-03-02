@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Briefcase, Check, Plus, Minus, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, Briefcase, Check, Plus, Minus, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
+import { sendSponsorReview, notifyAdmin } from "@/lib/emails";
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -133,6 +135,9 @@ export default function SponsorRegister() {
   );
 
   const grandTotal = (selectedPackData?.price ?? 0) + optionsTotal;
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function updateQty(id: string, delta: number) {
     setQuantities((prev) => ({
@@ -147,17 +152,74 @@ export default function SponsorRegister() {
     return true;
   }
 
-  function handleSubmit() {
-    const payload = {
-      company, contact, fonction, email, phone, website,
-      pack: selectedPack,
-      options: Object.fromEntries(
-        Object.entries(quantities).filter(([, v]) => v > 0)
-      ),
-      total: grandTotal,
-    };
-    console.log("Sponsor registration:", payload);
-    alert("Votre inscription sponsor a bien été enregistrée. Notre équipe vous contactera sous 48 h.");
+  async function handleSubmit() {
+    setSubmitting(true);
+    setErrorMsg("");
+    try {
+      // 1. Insert sponsor
+      const { data: inserted, error } = await supabase.from("sponsors").insert({
+        company_name: company,
+        contact_name: contact,
+        fonction: fonction || null,
+        email,
+        phone,
+        website: website || null,
+        pack_type: selectedPack,
+        pack_price: selectedPackData?.price ?? 0,
+        options_total: optionsTotal,
+        grand_total: grandTotal,
+      }).select("id").single();
+
+      if (error) {
+        if (error.code === "23505") {
+          setErrorMsg("Cet email est déjà inscrit comme sponsor.");
+        } else {
+          setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+        }
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Insert options
+      const optionsToInsert = OPTIONS
+        .filter((o) => (quantities[o.id] ?? 0) > 0)
+        .map((o) => ({
+          sponsor_id: inserted.id,
+          option_id: o.id,
+          quantity: quantities[o.id],
+          unit_price: o.unitPrice,
+        }));
+      if (optionsToInsert.length > 0) {
+        await supabase.from("sponsor_options").insert(optionsToInsert);
+      }
+
+      // 3. Email au sponsor (inscription en étude)
+      await sendSponsorReview({
+        company,
+        contact,
+        email,
+        packName: selectedPackData?.name ?? "",
+        total: formatCFA(grandTotal),
+      }).catch((err) => console.error("Email sponsor:", err));
+
+      // 4. Notification admin
+      await notifyAdmin("sponsor", {
+        "Entreprise": company,
+        "Contact": contact,
+        "Fonction": fonction || "—",
+        "Email": email,
+        "Téléphone": phone,
+        "Site web": website || "—",
+        "Pack": selectedPackData?.name ?? "",
+        "Total": formatCFA(grandTotal),
+      }).catch((err) => console.error("Email admin:", err));
+
+      setSubmitted(true);
+    } catch {
+      setErrorMsg("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -208,6 +270,24 @@ export default function SponsorRegister() {
           ))}
         </nav>
 
+        {/* SUCCESS SCREEN */}
+        {submitted ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-amber-600 mb-6">
+              <CheckCircle2 size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-3">Demande de sponsoring enregistrée !</h2>
+            <p className="text-slate-500 max-w-md mx-auto mb-6">
+              Merci <strong>{contact}</strong> ! Votre demande de sponsoring pour <strong>{company}</strong> est en cours d'étude.
+              Un email de confirmation a été envoyé à <strong>{email}</strong>.
+            </p>
+            <p className="text-sm text-slate-400 mb-8">L'équipe Difference Group vous contactera sous 48 heures pour finaliser votre partenariat.</p>
+            <Link href="/">
+              <Button className="bg-amber-600 hover:bg-amber-700">Retour à l'accueil</Button>
+            </Link>
+          </motion.div>
+        ) : (
+        <>
         {/* STEP CONTENT */}
         <motion.div
           key={step}
@@ -443,11 +523,19 @@ export default function SponsorRegister() {
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8 bg-amber-600 hover:bg-amber-700">
-              Confirmer l'inscription <Check size={16} />
+            <Button onClick={handleSubmit} disabled={submitting} className="gap-2 px-8 bg-amber-600 hover:bg-amber-700">
+              {submitting ? <><Loader2 size={16} className="animate-spin" /> Envoi en cours...</> : <>Confirmer l'inscription <Check size={16} /></>}
             </Button>
           )}
         </div>
+
+        {errorMsg && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+            {errorMsg}
+          </div>
+        )}
+        </>
+        )}
       </div>
     </div>
   );
