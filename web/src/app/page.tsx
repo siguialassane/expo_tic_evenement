@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { 
   ArrowRight, UserCircle, Briefcase, Building2, 
-  MapPin, CalendarDays, Users, Star, 
+  MapPin, CalendarDays, Users, 
   Target, CheckCircle2, ChevronRight, Mail, Phone, Calendar
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +23,7 @@ const staggerContainer = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
 };
 
 export default function Home() {
@@ -60,11 +60,11 @@ export default function Home() {
             height={40} 
             className="object-contain"
           />
-          <div className="hidden md:flex flex-col items-end">
-            <div className="flex items-center gap-2 text-destructive font-bold text-sm animate-pulse">
-              <Star size={16} fill="currentColor" /> Réservation de stands en cours
-            </div>
-          </div>
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/register/participant" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Participer</Link>
+            <Link href="/register/sponsor" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Sponsoring</Link>
+            <Link href="/register/exhibitor" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Exposer</Link>
+          </nav>
         </div>
       </header>
 
