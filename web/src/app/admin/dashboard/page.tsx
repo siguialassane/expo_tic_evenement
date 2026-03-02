@@ -208,7 +208,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-slate-50">
       {/* HEADER */}
       <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-[1600px] w-full mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/">
               <Image src="/expoTic.jpeg" alt="ExpoTic" width={100} height={30} className="object-contain" />
@@ -216,63 +216,63 @@ export default function AdminDashboard() {
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider hidden sm:inline">Administration</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <UserCircle size={18} />
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-700 bg-slate-100 py-1.5 px-3 rounded-full">
+              <UserCircle size={18} className="text-slate-500" />
               <span className="hidden sm:inline">{userEmail}</span>
             </div>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2 text-slate-500">
-              <LogOut size={14} /> Déconnexion
+            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors">
+              <LogOut size={14} /> <span className="hidden sm:inline">Déconnexion</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-[1600px] w-full mx-auto px-6 md:px-10 py-8 lg:py-12">
         {/* STATS CARDS */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }} className="bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                <Users size={20} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-10">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Users size={24} />
               </div>
-              <span className="text-sm font-medium text-slate-500">Participants</span>
+              <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Participants</span>
             </div>
-            <p className="text-3xl font-bold text-slate-900">{participants.length}</p>
+            <p className="text-4xl lg:text-5xl font-extrabold text-slate-900">{participants.length}</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center">
-                <Building2 size={20} />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+                <Building2 size={24} />
               </div>
-              <span className="text-sm font-medium text-slate-500">Exposants</span>
+              <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Exposants</span>
             </div>
-            <p className="text-3xl font-bold text-slate-900">{exposants.length}</p>
+            <p className="text-4xl lg:text-5xl font-extrabold text-slate-900">{exposants.length}</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
-                <Briefcase size={20} />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <Briefcase size={24} />
               </div>
-              <span className="text-sm font-medium text-slate-500">Sponsors</span>
+              <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Sponsors</span>
             </div>
-            <p className="text-3xl font-bold text-slate-900">{sponsors.length}</p>
+            <p className="text-4xl lg:text-5xl font-extrabold text-slate-900">{sponsors.length}</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
-                <DollarSign size={20} />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <DollarSign size={24} />
               </div>
-              <span className="text-sm font-medium text-slate-500">CA estimé</span>
+              <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">CA estimé</span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">{formatCFA(totalCA)}</p>
+            <p className="text-3xl lg:text-4xl font-extrabold text-slate-900 truncate" title={formatCFA(totalCA)}>{formatCFA(totalCA)}</p>
           </motion.div>
         </div>
 
         {/* TABS + SEARCH */}
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           {/* Tab bar */}
           <div className="flex items-center justify-between border-b border-slate-200 px-6 pt-4">
             <div className="flex gap-1">
@@ -345,38 +345,41 @@ export default function AdminDashboard() {
               {activeTab === "participants" && (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 text-left">
-                      <th className="px-6 py-3 font-semibold text-slate-600">Nom</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Email</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Téléphone</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Entreprise</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Secteur</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Jours</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Date</th>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nom complet</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Email</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Téléphone</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Entreprise</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Secteur</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Jours</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date Inscription</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredParticipants.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                          {search ? "Aucun résultat trouvé." : "Aucune inscription pour le moment."}
+                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                          {search ? "Aucun participant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
                       filteredParticipants.map((p) => (
-                        <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-3 font-medium text-slate-900">{p.first_name} {p.last_name}</td>
-                          <td className="px-6 py-3 text-slate-600">{p.email}</td>
-                          <td className="px-6 py-3 text-slate-600">{p.phone}</td>
-                          <td className="px-6 py-3 text-slate-600">{p.company ?? "—"}</td>
-                          <td className="px-6 py-3 text-slate-600">{p.sector ?? "—"}</td>
-                          <td className="px-6 py-3">
-                            <div className="flex gap-1">
-                              {p.jour1 && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">J1</span>}
-                              {p.jour2 && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">J2</span>}
+                        <tr key={p.id} className="hover:bg-slate-50/80 transition-colors group">
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">{p.first_name} {p.last_name}</div>
+                            <div className="text-xs text-slate-500 sm:hidden block mt-1">{p.email}</div>
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden sm:table-cell">{p.email}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden md:table-cell whitespace-nowrap">{p.phone}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden lg:table-cell">{p.company ?? "—"}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-500 hidden xl:table-cell max-w-[200px] truncate" title={p.sector || ""}>{p.sector ?? "—"}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <div className="flex gap-2">
+                              {p.jour1 && <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">Jour 1</span>}
+                              {p.jour2 && <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">Jour 2</span>}
                             </div>
                           </td>
-                          <td className="px-6 py-3 text-slate-500 text-xs">{formatDate(p.created_at)}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
                         </tr>
                       ))
                     )}
@@ -388,49 +391,62 @@ export default function AdminDashboard() {
               {activeTab === "exposants" && (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 text-left">
-                      <th className="px-6 py-3 font-semibold text-slate-600">Entreprise</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Contact</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Email</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Stand</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">B2B</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Total</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Statut</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Date</th>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Stand</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">B2B</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredExposants.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
-                          {search || statusFilter !== "all" ? "Aucun résultat trouvé." : "Aucune inscription pour le moment."}
+                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                          {search || statusFilter !== "all" ? "Aucun exposant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
                       filteredExposants.map((e) => (
-                        <tr key={e.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-3 font-medium text-slate-900">{e.company_name}</td>
-                          <td className="px-6 py-3 text-slate-600">{e.contact_name}</td>
-                          <td className="px-6 py-3 text-slate-600">{e.email}</td>
-                          <td className="px-6 py-3">
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 font-medium">
+                        <tr key={e.id} className="hover:bg-slate-50/80 transition-colors group">
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <div className="font-bold text-slate-900 group-hover:text-violet-700 transition-colors">{e.company_name}</div>
+                            <div className="text-sm text-slate-500 mt-1">{e.contact_name}</div>
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 hidden lg:table-cell">
+                            <div className="text-slate-700">{e.email}</div>
+                            <div className="text-xs text-slate-400 mt-1">{e.phone}</div>
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <span className="text-xs px-2.5 py-1 rounded-md bg-violet-50 text-violet-700 border border-violet-100 font-bold whitespace-nowrap">
                               {e.stand_type}
                             </span>
                           </td>
-                          <td className="px-6 py-3 text-slate-600">{e.want_b2b ? "Oui" : "Non"}</td>
-                          <td className="px-6 py-3 font-semibold text-slate-900">{formatCFA(e.grand_total)}</td>
-                          <td className="px-6 py-3">
+                          <td className="px-6 md:px-8 py-4 md:py-5 hidden xl:table-cell">
+                            {e.want_b2b 
+                              ? <span className="text-[10px] uppercase font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Oui</span> 
+                              : <span className="text-[10px] uppercase font-bold text-slate-400">Non</span>
+                            }
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 font-extrabold text-slate-900 whitespace-nowrap">
+                            {formatCFA(e.grand_total)}
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5">
                             <select
                               value={e.status}
                               onChange={(ev) => updateExposantStatus(e.id, ev.target.value)}
-                              className={`appearance-none text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer ${STATUS_LABELS[e.status]?.className ?? "bg-slate-100 text-slate-700"}`}
+                              className={`appearance-none text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-violet-500 ${STATUS_LABELS[e.status]?.className ?? "bg-slate-100 text-slate-700"}`}
                             >
                               <option value="pending">En attente</option>
                               <option value="confirmed">Confirmé</option>
                               <option value="cancelled">Annulé</option>
                             </select>
                           </td>
-                          <td className="px-6 py-3 text-slate-500 text-xs">{formatDate(e.created_at)}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
+                            {formatDate(e.created_at)}
+                          </td>
                         </tr>
                       ))
                     )}
@@ -442,55 +458,63 @@ export default function AdminDashboard() {
               {activeTab === "sponsors" && (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 text-left">
-                      <th className="px-6 py-3 font-semibold text-slate-600">Entreprise</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Contact</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Email</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Pack</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Total</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Statut</th>
-                      <th className="px-6 py-3 font-semibold text-slate-600">Date</th>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pack</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredSponsors.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                          {search || statusFilter !== "all" ? "Aucun résultat trouvé." : "Aucune inscription pour le moment."}
+                        <td colSpan={6} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                          {search || statusFilter !== "all" ? "Aucun sponsor trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
                       filteredSponsors.map((s) => (
-                        <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-3 font-medium text-slate-900">{s.company_name}</td>
-                          <td className="px-6 py-3 text-slate-600">{s.contact_name}</td>
-                          <td className="px-6 py-3 text-slate-600">{s.email}</td>
-                          <td className="px-6 py-3">
-                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        <tr key={s.id} className="hover:bg-slate-50/80 transition-colors group">
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <div className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{s.company_name}</div>
+                            <div className="text-sm text-slate-500 mt-1">{s.contact_name}</div>
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 hidden lg:table-cell">
+                            <div className="text-slate-700">{s.email}</div>
+                            <div className="text-xs text-slate-400 mt-1">{s.phone}</div>
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5">
+                            <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${
                               s.pack_type === "leader"
-                                ? "bg-amber-100 text-amber-800"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
                                 : s.pack_type === "diamant"
-                                ? "bg-purple-100 text-purple-800"
+                                ? "bg-purple-50 text-purple-700 border-purple-200"
                                 : s.pack_type === "or"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-orange-100 text-orange-800"
+                                ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                                : "bg-orange-50 text-orange-700 border-orange-200"
                             }`}>
-                              {s.pack_type.charAt(0).toUpperCase() + s.pack_type.slice(1)}
+                              {s.pack_type}
                             </span>
                           </td>
-                          <td className="px-6 py-3 font-semibold text-slate-900">{formatCFA(s.grand_total)}</td>
-                          <td className="px-6 py-3">
+                          <td className="px-6 md:px-8 py-4 md:py-5 font-extrabold text-slate-900 whitespace-nowrap">
+                            {formatCFA(s.grand_total)}
+                          </td>
+                          <td className="px-6 md:px-8 py-4 md:py-5">
                             <select
                               value={s.status}
                               onChange={(ev) => updateSponsorStatus(s.id, ev.target.value)}
-                              className={`appearance-none text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer ${STATUS_LABELS[s.status]?.className ?? "bg-slate-100 text-slate-700"}`}
+                              className={`appearance-none text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded border-0 cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-amber-500 ${STATUS_LABELS[s.status]?.className ?? "bg-slate-100 text-slate-700"}`}
                             >
                               <option value="pending">En attente</option>
                               <option value="confirmed">Confirmé</option>
                               <option value="cancelled">Annulé</option>
                             </select>
                           </td>
-                          <td className="px-6 py-3 text-slate-500 text-xs">{formatDate(s.created_at)}</td>
+                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
+                            {formatDate(s.created_at)}
+                          </td>
                         </tr>
                       ))
                     )}
