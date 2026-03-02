@@ -3,39 +3,62 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ArrowRight, UserCircle, Briefcase, Building2, 
-  MapPin, CalendarDays, Users, 
-  Target, CheckCircle2, ChevronRight, Mail, Phone, Calendar
+import {
+  ArrowRight, UserCircle, Briefcase, Building2,
+  MapPin, CalendarDays, Users,
+  Target, CheckCircle2, ChevronRight, Mail, Phone, Calendar,
+  Wifi, Shield, Cpu, Rocket, Globe, Zap, Menu, X
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+/* ------------------------------------------------------------------ */
+/*  THEME OFFICIEL                                                     */
+/*  Le thème officiel est :                                            */
+/*  "LA TECH AU SERVICE DE L'INNOVATION"                               */
+/*  Couleurs : Vert (primary), Blanc, avec accents par profil         */
+/*  Participant = bleu | Sponsor = ambre/or | Exposant = violet        */
+/* ------------------------------------------------------------------ */
+
+const fade = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  /* ---------- DATA ---------- */
+  const stats = [
+    { value: "5 000+", label: "Visiteurs attendus" },
+    { value: "100+", label: "Exposants & Start-ups" },
+    { value: "30+", label: "Conférences & Ateliers" },
+    { value: "2", label: "Jours d'immersion" },
+  ];
+
+  const highlights = [
+    { icon: Wifi, title: "Connectivité", text: "IoT, 5G, Smart City et infrastructures de demain" },
+    { icon: Shield, title: "Cybersécurité", text: "Protection des données, conformité et résilience" },
+    { icon: Cpu, title: "Intelligence Artificielle", text: "IA générative, automatisation et aide à la décision" },
+    { icon: Rocket, title: "Start-ups & Innovation", text: "Pitchs, incubateurs et écosystème entrepreneurial" },
+    { icon: Globe, title: "Transformation Digitale", text: "Cloud, ERP, e-gov et modernisation des process" },
+    { icon: Zap, title: "FinTech & Mobile Money", text: "Solutions de paiement, inclusion financière et néobanques" },
+  ];
+
   const advantages = [
-    "Développer votre réseau professionnel avec les acteurs clés",
+    "Développer votre réseau professionnel avec les acteurs clés du secteur",
     "Découvrir les dernières innovations technologiques et tendances",
     "Rencontrer des partenaires commerciaux potentiels",
     "Assister à des conférences et ateliers de haut niveau",
     "Accroître la visibilité de votre entreprise et de vos solutions",
     "Échanger avec des experts et décideurs du secteur TIC",
     "Identifier de nouvelles opportunités d'investissement",
-    "Participer activement à la transformation digitale de la région"
+    "Participer à la transformation digitale de la Côte d'Ivoire",
   ];
 
   const targets = [
@@ -44,288 +67,452 @@ export default function Home() {
     "Start-ups et Porteurs de projets innovants",
     "Investisseurs et Partenaires financiers",
     "Étudiants et Chercheurs en technologies",
-    "Grand public passionné par l'innovation"
+    "Grand public passionné par l'innovation",
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans overflow-x-hidden text-slate-800">
-      
-      {/* HEADER / NAVIGATION */}
-      <header className="w-full bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Image 
-            src="/expoTic.jpeg" 
-            alt="Logo Abidjan Expo Tic 2026" 
-            width={140} 
-            height={40} 
-            className="object-contain"
-          />
+    <div className="min-h-screen bg-white flex flex-col font-sans overflow-x-hidden text-slate-800">
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/*  HEADER                                                        */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <header className="w-full bg-white/90 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+          <Link href="/">
+            <Image
+              src="/expoTic.jpeg"
+              alt="Logo Abidjan Expo Tic 2026"
+              width={120}
+              height={36}
+              className="object-contain w-[100px] sm:w-[120px]"
+            />
+          </Link>
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/register/participant" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Participer</Link>
-            <Link href="/register/sponsor" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Sponsoring</Link>
-            <Link href="/register/exhibitor" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Exposer</Link>
+            <Link href="#programme" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Programme</Link>
+            <Link href="#pourquoi" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">Pourquoi venir</Link>
+            <Link href="#inscription" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">S'inscrire</Link>
           </nav>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-3">
+            <Button asChild variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+              <Link href="/register/participant">Participer</Link>
+            </Button>
+            <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
+              <Link href="#inscription">S'inscrire</Link>
+            </Button>
+          </div>
+
+          {/* Mobile burger */}
+          <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-3"
+          >
+            <Link href="#programme" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">Programme</Link>
+            <Link href="#pourquoi" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">Pourquoi venir</Link>
+            <Link href="#inscription" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">S'inscrire</Link>
+            <div className="flex flex-col gap-2 pt-2">
+              <Button asChild variant="outline" size="sm" className="w-full text-blue-600 border-blue-200">
+                <Link href="/register/participant">Participer</Link>
+              </Button>
+              <Button asChild size="sm" className="w-full bg-amber-600 hover:bg-amber-700">
+                <Link href="/register/sponsor">Sponsoring</Link>
+              </Button>
+              <Button asChild size="sm" className="w-full bg-violet-600 hover:bg-violet-700">
+                <Link href="/register/exhibitor">Réserver un stand</Link>
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </header>
 
-      <main className="flex-1 w-full relative">
-        
-        {/* HERO SECTION */}
-        <section className="relative pt-16 pb-24 px-6 overflow-hidden">
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] -z-10" />
-          <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-[100px] -z-10" />
-          
-          <div className="max-w-6xl mx-auto flex flex-col items-center justify-center text-center">
-            <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="flex flex-col items-center">
-              <motion.div variants={fadeUp} className="mb-8">
-                <Image 
-                  src="/expoTic.jpeg" 
-                  alt="Abidjan Expo Tic" 
-                  width={300} 
-                  height={150} 
-                  className="mx-auto rounded-xl shadow-lg mix-blend-multiply border border-slate-100"
+      <main className="flex-1 w-full">
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  HERO — Full-bleed image with overlay                         */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="relative min-h-[90vh] sm:min-h-[85vh] flex items-center justify-center overflow-hidden">
+          {/* Background image */}
+          <Image
+            src="/images/hero-tech.jpg"
+            alt="Événement technologique"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/70 to-slate-900/90" />
+          {/* Green accent line */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
+
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center py-16 sm:py-20">
+            <motion.div initial="hidden" animate="visible" variants={stagger}>
+
+              <motion.div variants={fade} className="mb-6 sm:mb-8">
+                <Image
+                  src="/expoTic.jpeg"
+                  alt="Abidjan Expo Tic"
+                  width={220}
+                  height={110}
+                  className="mx-auto rounded-xl border border-white/20 shadow-2xl w-[160px] sm:w-[220px]"
                 />
               </motion.div>
-              
-              <motion.div variants={fadeUp} className="inline-flex items-center rounded-full border border-destructive/20 bg-destructive/10 px-4 py-1.5 text-sm font-bold text-destructive mb-6 shadow-sm">
-                Places limitées — Événement majeur de l'année 2026
-              </motion.div>
 
-              <motion.h1 variants={fadeUp} className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 max-w-4xl">
-                La Tech au service de <span className="text-primary">l'innovation</span>
-              </motion.h1>
-              
-              <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed mb-10">
-                Le carrefour incontournable de la transformation digitale. Connectez-vous avec les leaders de demain et découvrez les solutions qui façonneront l'avenir.
+              <motion.p variants={fade} className="inline-block text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-primary mb-4 sm:mb-6">
+                Thème officiel 2026
               </motion.p>
 
-              {/* INFO BADGES */}
-              <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 md:gap-8 mb-16">
-                <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    <CalendarDays size={20} />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500 font-medium">Dates</p>
-                    <p className="font-bold text-sm md:text-base">7 - 8 Mai 2026</p>
-                  </div>
+              <motion.h1 variants={fade} className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-4 sm:mb-6 max-w-4xl mx-auto">
+                La Tech au service de{" "}
+                <span className="text-primary">l'Innovation</span>
+              </motion.h1>
+
+              <motion.p variants={fade} className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2">
+                Le rendez-vous annuel des acteurs de la transformation digitale en Afrique de l'Ouest.
+                Conférences, expositions, networking B2B et concours d'innovation.
+              </motion.p>
+
+              {/* Date / Lieu / Visiteurs badges */}
+              <motion.div variants={fade} className="flex flex-wrap justify-center gap-3 sm:gap-5 mb-8 sm:mb-12">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
+                  <CalendarDays size={16} className="text-primary shrink-0" />
+                  <span className="text-white text-sm font-semibold">7 - 8 Mai 2026</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    <MapPin size={20} />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500 font-medium">Lieu</p>
-                    <p className="font-bold text-sm md:text-base">Sofitel Hôtel Ivoire</p>
-                  </div>
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
+                  <MapPin size={16} className="text-primary shrink-0" />
+                  <span className="text-white text-sm font-semibold">Sofitel Hôtel Ivoire, Abidjan</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    <Users size={20} />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs text-slate-500 font-medium">Affluence</p>
-                    <p className="font-bold text-sm md:text-base">5 000+ Visiteurs</p>
-                  </div>
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
+                  <Users size={16} className="text-primary shrink-0" />
+                  <span className="text-white text-sm font-semibold">5 000+ Visiteurs</span>
                 </div>
+              </motion.div>
+
+              {/* CTA Buttons — Color-coded */}
+              <motion.div variants={fade} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                <Button asChild size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-600/30 h-12 px-8">
+                  <Link href="/register/participant">
+                    <UserCircle size={18} className="mr-2" /> Participer gratuitement
+                  </Link>
+                </Button>
+                <Button asChild size="lg" className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-lg shadow-amber-600/30 h-12 px-8">
+                  <Link href="/register/sponsor">
+                    <Briefcase size={18} className="mr-2" /> Devenir Sponsor
+                  </Link>
+                </Button>
+                <Button asChild size="lg" className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-lg shadow-violet-600/30 h-12 px-8">
+                  <Link href="/register/exhibitor">
+                    <Building2 size={18} className="mr-2" /> Réserver un Stand
+                  </Link>
+                </Button>
               </motion.div>
             </motion.div>
           </div>
+        </section>
 
-          {/* HUB REGISTRATION CARDS */}
-          <div className="max-w-6xl mx-auto" id="registration-hub">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-bold text-slate-800">Choisissez votre profil pour continuer</h2>
-              <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full" />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {/* Participant */}
-              <Link href="/register/participant" className="block h-full group focus:outline-none">
-                <Card className="h-full border-2 border-transparent transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 bg-white relative overflow-hidden group-focus:border-primary">
-                  <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <UserCircle size={150} />
-                  </div>
-                  <CardHeader>
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 text-slate-600 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                      <UserCircle size={28} />
-                    </div>
-                    <CardTitle className="text-2xl text-slate-800">Participant</CardTitle>
-                    <CardDescription className="text-base mt-2">Accédez aux conférences, visitez les stands et réseautez avec les professionnels.</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="mt-auto pt-6">
-                    <span className="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Je m'inscris <ArrowRight size={18} />
-                    </span>
-                  </CardFooter>
-                </Card>
-              </Link>
-
-              {/* Sponsor */}
-              <Link href="/register/sponsor" className="block h-full group focus:outline-none">
-                <Card className="h-full border-2 border-transparent transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 bg-white relative overflow-hidden group-focus:border-primary">
-                  <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Briefcase size={150} />
-                  </div>
-                  <CardHeader>
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 text-slate-600 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                      <Briefcase size={28} />
-                    </div>
-                    <CardTitle className="text-2xl text-slate-800">Sponsor</CardTitle>
-                    <CardDescription className="text-base mt-2">Visibilité maximale globale : associez votre image à l'événement de l'année.</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="mt-auto pt-6">
-                    <span className="text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Devenir Sponsor <ArrowRight size={18} />
-                    </span>
-                  </CardFooter>
-                </Card>
-              </Link>
-
-              {/* Exhibitor */}
-              <Link href="/register/exhibitor" className="block h-full group focus:outline-none">
-                <Card className="h-full border-2 border-destructive/20 shadow-lg transition-all duration-300 hover:border-destructive/60 hover:shadow-2xl hover:shadow-destructive/10 bg-white relative overflow-hidden group-focus:border-destructive">
-                  <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity text-destructive">
-                    <Building2 size={150} />
-                  </div>
-                  <div className="absolute top-4 right-4 bg-destructive text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm animate-pulse">
-                    Urgent
-                  </div>
-                  <CardHeader>
-                    <div className="w-14 h-14 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4 text-destructive group-hover:bg-destructive group-hover:text-white transition-colors duration-300">
-                      <Building2 size={28} />
-                    </div>
-                    <CardTitle className="text-2xl text-slate-800">Exposant</CardTitle>
-                    <CardDescription className="text-base mt-2">Réservez vite votre stand pour présenter vos produits face à 5 000 visiteurs.</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="mt-auto pt-6">
-                    <span className="text-destructive font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Réserver un Stand <ArrowRight size={18} />
-                    </span>
-                  </CardFooter>
-                </Card>
-              </Link>
-            </div>
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  STATS BAR                                                    */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="bg-primary text-white">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4">
+            {stats.map((s, i) => (
+              <div key={i} className="text-center py-6 sm:py-8 border-r border-white/10 last:border-r-0">
+                <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold">{s.value}</p>
+                <p className="text-xs sm:text-sm font-medium text-white/80 mt-1">{s.label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* POURQUOI PARTICIPER */}
-        <section className="py-24 bg-white px-6">
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  THÈMES & SECTEURS                                            */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-slate-50">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Pourquoi participer à l'ExpoTic ?</h2>
-              <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Découvrez les 8 raisons majeures de ne pas manquer ce rendez-vous technologique.</p>
+            <div className="text-center mb-12 sm:mb-16">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Thèmes couverts</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">Les secteurs clés de l'événement</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {advantages.map((adv, idx) => (
-                <motion.div 
-                  key={idx}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {highlights.map((h, i) => (
+                <motion.div
+                  key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="bg-slate-50 border border-slate-100 p-6 rounded-2xl hover:shadow-lg hover:border-primary/30 transition-all duration-300 flex flex-col"
+                  transition={{ delay: i * 0.08 }}
+                  className="bg-white p-6 rounded-xl border border-slate-100 hover:border-primary/30 hover:shadow-lg transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4 shrink-0">
-                    <CheckCircle2 size={20} />
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <h.icon size={22} />
                   </div>
-                  <p className="text-slate-700 font-medium leading-snug">{adv}</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">{h.title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">{h.text}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* PROGRAMME & CIBLES */}
-        <section className="py-24 bg-slate-900 text-white px-6 relative overflow-hidden">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
-            {/* Programme */}
-            <div>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-white/10 rounded-xl"><Calendar size={24} className="text-primary" /></div>
-                <h2 className="text-3xl font-bold">Programme Détaillé</h2>
-              </div>
-              <div className="space-y-8">
-                <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                  <h3 className="text-xl font-bold text-primary mb-4 border-b border-white/10 pb-2">Jour 1 - 7 Mai 2026</h3>
-                  <ul className="space-y-4">
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">08:00</span>
-                      <span className="text-slate-200">Accueil et enregistrement des participants</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">09:30</span>
-                      <span className="text-slate-200 font-medium">Cérémonie d'ouverture officielle</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">11:00</span>
-                      <span className="text-slate-200">Ouverture des stands et expositions</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">14:00</span>
-                      <span className="text-slate-200">Début des Panels thématiques et Keynotes</span>
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                  <h3 className="text-xl font-bold text-primary mb-4 border-b border-white/10 pb-2">Jour 2 - 8 Mai 2026</h3>
-                  <ul className="space-y-4">
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">09:00</span>
-                      <span className="text-slate-200">Ateliers techniques et Masterclasses</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">11:00</span>
-                      <span className="text-slate-200 font-medium">Rencontres B2B Exclusives</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm text-slate-400 w-12 shrink-0 pt-1">14:00</span>
-                      <span className="text-slate-200">Pitch des Startups & Concours d'innovation</span>
-                    </li>
-                    <li className="flex gap-4">
-                      <span className="font-mono text-sm inline-block text-slate-400 w-12 shrink-0 pt-1">17:00</span>
-                      <span className="text-slate-200 font-medium text-destructive">Cérémonie de clôture et Mots de fin</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  GALLERY / ACTIVITÉS                                          */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Au programme</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">2 jours d'immersion technologique</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {[
+                { img: "/images/conference.jpg", title: "Conférences & Panels", desc: "Keynotes, tables rondes avec des leaders du secteur TIC africain et international." },
+                { img: "/images/exhibition.jpg", title: "Exposition Technologique", desc: "Plus de 100 stands présentant les dernières solutions et innovations." },
+                { img: "/images/networking.jpg", title: "Networking & B2B", desc: "Rencontres qualifiées entre décideurs, investisseurs et porteurs de projets." },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group overflow-hidden rounded-2xl border border-slate-100 bg-white"
+                >
+                  <div className="relative h-48 sm:h-56 overflow-hidden">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  </div>
+                  <div className="p-5 sm:p-6">
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  PROGRAMME DÉTAILLÉ                                           */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section id="programme" className="py-16 sm:py-24 bg-slate-900 text-white px-4 sm:px-6 relative overflow-hidden">
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_1px_1px,_white_1px,_transparent_0)] bg-[size:40px_40px]" />
+
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-12 sm:mb-16">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Agenda</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Programme des 2 Jours</h2>
             </div>
 
-            {/* Cibles */}
-            <div>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-white/10 rounded-xl"><Target size={24} className="text-primary" /></div>
-                <h2 className="text-3xl font-bold">À qui s'adresse l'événement ?</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {targets.map((target, idx) => (
-                  <div key={idx} className="bg-white/5 border border-white/10 p-4 rounded-xl flex items-start gap-3">
-                    <ChevronRight size={18} className="text-primary shrink-0 mt-0.5" />
-                    <span className="text-slate-200 text-sm font-medium">{target}</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+              {/* Jour 1 */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <Calendar size={18} className="text-white" />
                   </div>
-                ))}
+                  <div>
+                    <h3 className="text-lg font-bold">Jour 1</h3>
+                    <p className="text-sm text-slate-400">Mercredi 7 Mai 2026</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    { time: "08:00", label: "Accueil et enregistrement des participants" },
+                    { time: "09:30", label: "Cérémonie d'ouverture officielle", bold: true },
+                    { time: "11:00", label: "Ouverture des stands et expositions" },
+                    { time: "14:00", label: "Panels thématiques et Keynotes" },
+                    { time: "16:30", label: "Sessions de networking ouvertes" },
+                  ].map((e, i) => (
+                    <div key={i} className="flex gap-4 items-start">
+                      <span className="font-mono text-sm text-primary w-12 shrink-0 pt-0.5">{e.time}</span>
+                      <span className={`text-sm sm:text-base ${e.bold ? "text-white font-semibold" : "text-slate-300"}`}>{e.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="mt-12 bg-primary/20 border border-primary/50 p-8 rounded-2xl text-center">
-                <div className="text-5xl font-extrabold text-white mb-2">5 000+</div>
-                <div className="text-primary font-medium text-lg uppercase tracking-wider">Visiteurs attendus</div>
-                <p className="text-slate-300 mt-4 text-sm">Devenez l'un des acteurs majeurs de ce chiffre impressionnant.</p>
-                <Button className="mt-6 font-bold shadow-lg" size="lg" asChild>
-                  <Link href="#registration-hub">Rejoindre l'événement</Link>
-                </Button>
+              {/* Jour 2 */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <Calendar size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold">Jour 2</h3>
+                    <p className="text-sm text-slate-400">Jeudi 8 Mai 2026</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    { time: "09:00", label: "Ateliers techniques et Masterclasses" },
+                    { time: "11:00", label: "Rencontres B2B exclusives", bold: true },
+                    { time: "14:00", label: "Pitch des Start-ups & Concours d'innovation" },
+                    { time: "16:00", label: "Remise des prix et distinctions" },
+                    { time: "17:00", label: "Cérémonie de clôture", bold: true },
+                  ].map((e, i) => (
+                    <div key={i} className="flex gap-4 items-start">
+                      <span className="font-mono text-sm text-primary w-12 shrink-0 pt-0.5">{e.time}</span>
+                      <span className={`text-sm sm:text-base ${e.bold ? "text-white font-semibold" : "text-slate-300"}`}>{e.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* PARTENAIRES */}
-        <section className="py-20 bg-slate-50 px-6 border-b border-slate-200">
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  POURQUOI PARTICIPER                                          */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section id="pourquoi" className="py-16 sm:py-24 bg-white px-4 sm:px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Bénéfices</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">8 raisons de ne pas manquer ExpoTic</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              {advantages.map((adv, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.06 }}
+                  className="flex items-start gap-3 bg-slate-50 p-5 rounded-xl border border-slate-100 hover:border-primary/30 transition-all"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 size={16} />
+                  </div>
+                  <p className="text-sm text-slate-700 font-medium leading-snug">{adv}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  CIBLES                                                       */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="py-16 sm:py-24 bg-slate-50 px-4 sm:px-6">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            {/* Image side */}
+            <div className="relative rounded-2xl overflow-hidden h-64 sm:h-80 lg:h-full min-h-[300px]">
+              <Image
+                src="/images/innovation.jpg"
+                alt="Innovation technologique"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent" />
+            </div>
+
+            {/* Text side */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Public cible</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 sm:mb-8">À qui s'adresse l'événement ?</h2>
+              <div className="space-y-3">
+                {targets.map((target, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-white p-4 rounded-lg border border-slate-100">
+                    <ChevronRight size={16} className="text-primary shrink-0" />
+                    <span className="text-sm sm:text-base font-medium text-slate-700">{target}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  INSCRIPTION — 3 PROFILS (COLOR-CODED)                       */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section id="inscription" className="py-16 sm:py-24 bg-white px-4 sm:px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 sm:mb-16">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Inscription</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">Choisissez votre profil</h2>
+              <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">Sélectionnez le parcours qui vous correspond pour accéder au formulaire d'inscription adapté.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+              {/* PARTICIPANT — Blue */}
+              <Link href="/register/participant" className="block group">
+                <div className="relative border-2 border-blue-100 rounded-2xl p-6 sm:p-8 bg-white hover:border-blue-400 hover:shadow-xl hover:shadow-blue-600/10 transition-all h-full flex flex-col">
+                  <div className="w-14 h-14 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <UserCircle size={28} />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Participant</h3>
+                  <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Accédez aux conférences, visitez les stands d'exposition et développez votre réseau professionnel.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Gratuit</span>
+                    <span className="text-blue-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
+                      S'inscrire <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              {/* SPONSOR — Amber */}
+              <Link href="/register/sponsor" className="block group">
+                <div className="relative border-2 border-amber-100 rounded-2xl p-6 sm:p-8 bg-white hover:border-amber-400 hover:shadow-xl hover:shadow-amber-600/10 transition-all h-full flex flex-col">
+                  <div className="w-14 h-14 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-5 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                    <Briefcase size={28} />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Sponsor</h3>
+                  <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Associez votre image à l'événement et bénéficiez d'une visibilité maximale auprès de 5 000+ décideurs.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Dès 3M FCFA</span>
+                    <span className="text-amber-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
+                      Voir les packs <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              {/* EXPOSANT — Violet */}
+              <Link href="/register/exhibitor" className="block group">
+                <div className="relative border-2 border-violet-100 rounded-2xl p-6 sm:p-8 bg-white hover:border-violet-400 hover:shadow-xl hover:shadow-violet-600/10 transition-all h-full flex flex-col">
+                  <div className="w-14 h-14 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-5 group-hover:bg-violet-600 group-hover:text-white transition-colors">
+                    <Building2 size={28} />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Exposant</h3>
+                  <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Réservez votre stand pour présenter vos produits et solutions face à des milliers de visiteurs qualifiés.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-3 py-1 rounded-full">Dès 300K FCFA</span>
+                    <span className="text-violet-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
+                      Réserver <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  PARTENAIRES                                                   */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <section className="py-12 sm:py-16 bg-slate-50 px-4 sm:px-6 border-y border-slate-100">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-10">Nos Partenaires Officiels</h2>
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 sm:mb-10">Partenaires officiels</p>
+            <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 md:gap-16">
               {["GOTIG", "LubDSI", "Abidjan Magazine", "EXIAS"].map((partner, idx) => (
-                <div key={idx} className="text-2xl md:text-3xl font-extrabold text-slate-300 grayscale hover:grayscale-0 hover:text-slate-800 transition-all cursor-default">
+                <div key={idx} className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-300 hover:text-primary transition-colors cursor-default select-none">
                   {partner}
                 </div>
               ))}
@@ -333,29 +520,38 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="bg-white py-12 px-6">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center">
-               <Image 
-                  src="/expoTic.jpeg" 
-                  alt="Abidjan Expo Tic" 
-                  width={100} 
-                  height={50} 
-                  className="grayscale opacity-60"
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/*  FOOTER                                                       */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <footer className="bg-slate-900 text-white py-10 sm:py-14 px-4 sm:px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+              <div>
+                <Image
+                  src="/expoTic.jpeg"
+                  alt="Abidjan Expo Tic"
+                  width={110}
+                  height={40}
+                  className="rounded-lg border border-white/10 mb-3"
                 />
+                <p className="text-sm text-slate-400">7 - 8 Mai 2026 — Sofitel Hôtel Ivoire, Abidjan</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm">
+                <a href="mailto:contact@expotic.ci" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
+                  <Mail size={16} /> contact@expotic.ci
+                </a>
+                <a href="tel:+22500000000" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
+                  <Phone size={16} /> +225 00 00 00 00
+                </a>
+              </div>
             </div>
-            <div className="flex flex-col md:flex-row gap-6 text-sm text-slate-500 font-medium">
-              <a href="mailto:contact@expotic.ci" className="flex items-center gap-2 hover:text-primary transition-colors hover:underline">
-                <Mail size={16} /> contact@expotic.ci
-              </a>
-              <span className="hidden md:inline text-slate-300">|</span>
-              <a href="tel:+22500000000" className="flex items-center gap-2 hover:text-primary transition-colors hover:underline">
-                <Phone size={16} /> +225 00 00 00 00
-              </a>
-            </div>
-            <div className="text-slate-400 text-sm">
-              &copy; 2026 ExpoTic. Tous droits réservés.
+            <div className="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+              <span>&copy; 2026 Abidjan Expo Tic. Organisé par DIFFERENCE GROUP. Tous droits réservés.</span>
+              <div className="flex gap-4">
+                <Link href="/register/participant" className="text-blue-400 hover:text-blue-300">Participer</Link>
+                <Link href="/register/sponsor" className="text-amber-400 hover:text-amber-300">Sponsoring</Link>
+                <Link href="/register/exhibitor" className="text-violet-400 hover:text-violet-300">Exposer</Link>
+              </div>
             </div>
           </div>
         </footer>

@@ -97,7 +97,7 @@ export default function ParticipantRegister() {
       <div className="max-w-3xl mx-auto px-6 py-10">
         {/* TITLE */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-blue-100 text-blue-600 mb-4">
             <UserCircle size={28} />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Inscription Participant</h1>
@@ -114,9 +114,9 @@ export default function ParticipantRegister() {
                 onClick={() => { if (i < step) setStep(i); }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   i === step
-                    ? "bg-primary text-white"
+                    ? "bg-blue-600 text-white"
                     : i < step
-                    ? "bg-primary/10 text-primary cursor-pointer"
+                    ? "bg-blue-100 text-blue-600 cursor-pointer"
                     : "bg-slate-100 text-slate-400"
                 }`}
               >
@@ -124,7 +124,7 @@ export default function ParticipantRegister() {
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-px ${i < step ? "bg-primary" : "bg-slate-200"}`} />
+                <div className={`w-6 h-px ${i < step ? "bg-blue-600" : "bg-slate-200"}`} />
               )}
             </div>
           ))}
@@ -202,7 +202,7 @@ export default function ParticipantRegister() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <label
                     className={`flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors ${
-                      jour1 ? "border-primary bg-primary/5" : "border-slate-200"
+                      jour1 ? "border-blue-500 bg-blue-50" : "border-slate-200"
                     }`}
                   >
                     <Checkbox checked={jour1} onCheckedChange={(v) => setJour1(v === true)} />
@@ -213,7 +213,7 @@ export default function ParticipantRegister() {
                   </label>
                   <label
                     className={`flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors ${
-                      jour2 ? "border-primary bg-primary/5" : "border-slate-200"
+                      jour2 ? "border-blue-500 bg-blue-50" : "border-slate-200"
                     }`}
                   >
                     <Checkbox checked={jour2} onCheckedChange={(v) => setJour2(v === true)} />
@@ -263,7 +263,7 @@ export default function ParticipantRegister() {
           {step === 2 && (
             <div className="bg-white rounded-2xl border border-slate-200 p-8">
               <div className="flex items-center gap-3 mb-6">
-                <FileText size={20} className="text-primary" />
+                <FileText size={20} className="text-blue-600" />
                 <h2 className="text-lg font-semibold text-slate-900">Récapitulatif de votre inscription</h2>
               </div>
 
@@ -284,12 +284,12 @@ export default function ParticipantRegister() {
                 <p className="text-sm text-slate-500 mb-2">Journées sélectionnées :</p>
                 <div className="flex flex-wrap gap-2">
                   {jour1 && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-medium">
                       <Check size={12} /> Jour 1 — 7 mai
                     </span>
                   )}
                   {jour2 && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-medium">
                       <Check size={12} /> Jour 2 — 8 mai
                     </span>
                   )}
@@ -298,8 +298,8 @@ export default function ParticipantRegister() {
 
               <Separator className="my-6" />
 
-              <div className="bg-primary/5 rounded-lg p-4">
-                <p className="text-sm font-medium text-primary">Entrée gratuite</p>
+              <div className="bg-blue-50 rounded-lg p-4">
+                <p className="text-sm font-medium text-blue-600">Entrée gratuite</p>
                 <p className="text-xs text-slate-500 mt-1">Un QR code d'accès vous sera envoyé par email après confirmation.</p>
               </div>
             </div>
@@ -321,12 +321,12 @@ export default function ParticipantRegister() {
             <Button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canContinue()}
-              className="gap-2"
+              className="gap-2 bg-blue-600 hover:bg-blue-700"
             >
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8">
+            <Button onClick={handleSubmit} className="gap-2 px-8 bg-blue-600 hover:bg-blue-700">
               Confirmer l'inscription <Check size={16} />
             </Button>
           )}

@@ -175,7 +175,7 @@ export default function SponsorRegister() {
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* TITLE */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-amber-100 text-amber-600 mb-4">
             <Briefcase size={28} />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Devenir Sponsor</h1>
@@ -192,9 +192,9 @@ export default function SponsorRegister() {
                 onClick={() => { if (i < step) setStep(i); }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   i === step
-                    ? "bg-primary text-white"
+                    ? "bg-amber-600 text-white"
                     : i < step
-                    ? "bg-primary/10 text-primary cursor-pointer"
+                    ? "bg-amber-100 text-amber-600 cursor-pointer"
                     : "bg-slate-100 text-slate-400"
                 }`}
               >
@@ -202,7 +202,7 @@ export default function SponsorRegister() {
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-px ${i < step ? "bg-primary" : "bg-slate-200"}`} />
+                <div className={`w-6 h-px ${i < step ? "bg-amber-600" : "bg-slate-200"}`} />
               )}
             </div>
           ))}
@@ -263,22 +263,22 @@ export default function SponsorRegister() {
                       onClick={() => setSelectedPack(pack.id)}
                       className={`relative text-left rounded-xl border-2 p-6 transition-all ${
                         active
-                          ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                          ? "border-amber-500 bg-amber-50 ring-1 ring-amber-200"
                           : "border-slate-200 bg-white hover:border-slate-400"
                       }`}
                     >
                       {pack.badge && !active && (
-                        <Badge className="absolute top-4 right-4 bg-primary text-white text-[10px] font-bold uppercase tracking-wider">
+                        <Badge className="absolute top-4 right-4 bg-amber-600 text-white text-[10px] font-bold uppercase tracking-wider">
                           {pack.badge}
                         </Badge>
                       )}
                       {active && (
-                        <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                        <div className="absolute top-4 right-4 w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center">
                           <Check size={14} className="text-white" />
                         </div>
                       )}
                       <h3 className="text-xl font-bold text-slate-900 mb-1">Pack {pack.name}</h3>
-                      <p className="text-2xl font-extrabold text-primary mb-4">{formatCFA(pack.price)}</p>
+                      <p className="text-2xl font-extrabold text-amber-600 mb-4">{formatCFA(pack.price)}</p>
                       <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
                         <span>Stand {pack.standSize}</span>
                         <span className="w-px h-3 bg-slate-300" />
@@ -287,7 +287,7 @@ export default function SponsorRegister() {
                       <ul className="space-y-1.5">
                         {pack.highlights.map((h, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                            <Check size={14} className="text-primary mt-0.5 shrink-0" />
+                            <Check size={14} className="text-amber-600 mt-0.5 shrink-0" />
                             <span>{h}</span>
                           </li>
                         ))}
@@ -311,7 +311,7 @@ export default function SponsorRegister() {
                     <div
                       key={opt.id}
                       className={`flex items-center justify-between border rounded-lg px-5 py-4 transition-colors ${
-                        qty > 0 ? "border-primary/30 bg-primary/5" : "border-slate-200"
+                        qty > 0 ? "border-amber-300 bg-amber-50" : "border-slate-200"
                       }`}
                     >
                       <div>
@@ -331,12 +331,12 @@ export default function SponsorRegister() {
                         <button
                           type="button"
                           onClick={() => updateQty(opt.id, 1)}
-                          className="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-colors"
+                          className="w-8 h-8 rounded-full border border-amber-500 text-amber-600 flex items-center justify-center hover:bg-amber-50 transition-colors"
                         >
                           <Plus size={14} />
                         </button>
                         {qty > 0 && (
-                          <span className="text-sm font-semibold text-primary ml-2 min-w-[100px] text-right">
+                          <span className="text-sm font-semibold text-amber-600 ml-2 min-w-[100px] text-right">
                             {formatCFA(opt.unitPrice * qty)}
                           </span>
                         )}
@@ -347,7 +347,7 @@ export default function SponsorRegister() {
               </div>
               {optionsTotal > 0 && (
                 <div className="mt-6 text-right text-sm font-semibold text-slate-700">
-                  Sous-total options : <span className="text-primary">{formatCFA(optionsTotal)}</span>
+                  Sous-total options : <span className="text-amber-600">{formatCFA(optionsTotal)}</span>
                 </div>
               )}
             </div>
@@ -358,7 +358,7 @@ export default function SponsorRegister() {
             <div className="space-y-6">
               <div className="bg-white rounded-2xl border border-slate-200 p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <FileText size={20} className="text-primary" />
+                  <FileText size={20} className="text-amber-600" />
                   <h2 className="text-lg font-semibold text-slate-900">Récapitulatif de votre inscription</h2>
                 </div>
 
@@ -405,7 +405,7 @@ export default function SponsorRegister() {
 
                 <div className="flex items-center justify-between">
                   <p className="text-lg font-bold text-slate-900">TOTAL TTC</p>
-                  <p className="text-2xl font-extrabold text-primary">{formatCFA(grandTotal)}</p>
+                  <p className="text-2xl font-extrabold text-amber-600">{formatCFA(grandTotal)}</p>
                 </div>
               </div>
 
@@ -438,12 +438,12 @@ export default function SponsorRegister() {
             <Button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canContinue()}
-              className="gap-2"
+              className="gap-2 bg-amber-600 hover:bg-amber-700"
             >
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8">
+            <Button onClick={handleSubmit} className="gap-2 px-8 bg-amber-600 hover:bg-amber-700">
               Confirmer l'inscription <Check size={16} />
             </Button>
           )}

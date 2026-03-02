@@ -153,7 +153,7 @@ export default function ExhibitorRegister() {
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* TITLE */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 text-primary mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-violet-100 text-violet-600 mb-4">
             <Building2 size={28} />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Réserver un Stand</h1>
@@ -170,9 +170,9 @@ export default function ExhibitorRegister() {
                 onClick={() => { if (i < step) setStep(i); }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   i === step
-                    ? "bg-primary text-white"
+                    ? "bg-violet-600 text-white"
                     : i < step
-                    ? "bg-primary/10 text-primary cursor-pointer"
+                    ? "bg-violet-100 text-violet-600 cursor-pointer"
                     : "bg-slate-100 text-slate-400"
                 }`}
               >
@@ -180,7 +180,7 @@ export default function ExhibitorRegister() {
                 <span className="hidden sm:inline">{label}</span>
               </button>
               {i < STEPS.length - 1 && (
-                <div className={`w-6 h-px ${i < step ? "bg-primary" : "bg-slate-200"}`} />
+                <div className={`w-6 h-px ${i < step ? "bg-violet-600" : "bg-slate-200"}`} />
               )}
             </div>
           ))}
@@ -269,22 +269,22 @@ export default function ExhibitorRegister() {
                       onClick={() => setSelectedStand(stand.id)}
                       className={`relative text-left rounded-xl border-2 p-6 transition-all ${
                         active
-                          ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                          ? "border-violet-500 bg-violet-50 ring-1 ring-violet-200"
                           : "border-slate-200 bg-white hover:border-slate-400"
                       }`}
                     >
                       {active && (
-                        <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                        <div className="absolute top-4 right-4 w-6 h-6 bg-violet-600 rounded-full flex items-center justify-center">
                           <Check size={14} className="text-white" />
                         </div>
                       )}
                       <p className="text-3xl font-extrabold text-slate-900 mb-1">{stand.size}</p>
-                      <p className="text-2xl font-bold text-primary mb-3">{formatCFA(stand.price)}</p>
+                      <p className="text-2xl font-bold text-violet-600 mb-3">{formatCFA(stand.price)}</p>
                       <p className="text-sm text-slate-500 mb-4">{stand.description}</p>
                       <ul className="space-y-1.5">
                         {stand.features.map((f, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                            <Check size={14} className="text-primary mt-0.5 shrink-0" />
+                            <Check size={14} className="text-violet-600 mt-0.5 shrink-0" />
                             <span>{f}</span>
                           </li>
                         ))}
@@ -308,7 +308,7 @@ export default function ExhibitorRegister() {
                     <div
                       key={opt.id}
                       className={`flex items-center justify-between border rounded-lg px-5 py-4 transition-colors ${
-                        qty > 0 ? "border-primary/30 bg-primary/5" : "border-slate-200"
+                        qty > 0 ? "border-violet-300 bg-violet-50" : "border-slate-200"
                       }`}
                     >
                       <div>
@@ -328,12 +328,12 @@ export default function ExhibitorRegister() {
                         <button
                           type="button"
                           onClick={() => updateQty(opt.id, 1)}
-                          className="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-colors"
+                          className="w-8 h-8 rounded-full border border-violet-500 text-violet-600 flex items-center justify-center hover:bg-violet-50 transition-colors"
                         >
                           <Plus size={14} />
                         </button>
                         {qty > 0 && (
-                          <span className="text-sm font-semibold text-primary ml-2 min-w-[100px] text-right">
+                          <span className="text-sm font-semibold text-violet-600 ml-2 min-w-[100px] text-right">
                             {formatCFA(opt.unitPrice * qty)}
                           </span>
                         )}
@@ -344,7 +344,7 @@ export default function ExhibitorRegister() {
               </div>
               {optionsTotal > 0 && (
                 <div className="mt-6 text-right text-sm font-semibold text-slate-700">
-                  Sous-total options : <span className="text-primary">{formatCFA(optionsTotal)}</span>
+                  Sous-total options : <span className="text-violet-600">{formatCFA(optionsTotal)}</span>
                 </div>
               )}
             </div>
@@ -355,7 +355,7 @@ export default function ExhibitorRegister() {
             <div className="space-y-6">
               <div className="bg-white rounded-2xl border border-slate-200 p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <FileText size={20} className="text-primary" />
+                  <FileText size={20} className="text-violet-600" />
                   <h2 className="text-lg font-semibold text-slate-900">Récapitulatif de votre réservation</h2>
                 </div>
 
@@ -365,7 +365,7 @@ export default function ExhibitorRegister() {
                   <div><span className="text-slate-500">Email :</span> <span className="font-medium text-slate-800">{email}</span></div>
                   <div><span className="text-slate-500">Téléphone :</span> <span className="font-medium text-slate-800">{phone}</span></div>
                   <div><span className="text-slate-500">Secteur :</span> <span className="font-medium text-slate-800">{sector}</span></div>
-                  {wantB2B && <div><span className="text-slate-500">B2B :</span> <span className="font-medium text-primary">Oui, intéressé</span></div>}
+                  {wantB2B && <div><span className="text-slate-500">B2B :</span> <span className="font-medium text-violet-600">Oui, intéressé</span></div>}
                 </div>
 
                 {description && (
@@ -409,7 +409,7 @@ export default function ExhibitorRegister() {
 
                 <div className="flex items-center justify-between">
                   <p className="text-lg font-bold text-slate-900">TOTAL TTC</p>
-                  <p className="text-2xl font-extrabold text-primary">{formatCFA(grandTotal)}</p>
+                  <p className="text-2xl font-extrabold text-violet-600">{formatCFA(grandTotal)}</p>
                 </div>
               </div>
 
@@ -442,12 +442,12 @@ export default function ExhibitorRegister() {
             <Button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canContinue()}
-              className="gap-2"
+              className="gap-2 bg-violet-600 hover:bg-violet-700"
             >
               Suivant <ArrowRight size={16} />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="gap-2 px-8">
+            <Button onClick={handleSubmit} className="gap-2 px-8 bg-violet-600 hover:bg-violet-700">
               Confirmer la réservation <Check size={16} />
             </Button>
           )}
