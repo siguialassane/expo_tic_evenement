@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Users, Building2, Briefcase, DollarSign,
   LogOut, Loader2, Search, RefreshCw,
-  UserCircle, ChevronDown,
+  UserCircle, ChevronDown, Eye, X, MapPin, Phone, Mail, Globe, Calendar, Package,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -67,6 +67,34 @@ interface Sponsor {
   created_at: string;
 }
 
+interface ExposantOption {
+  id: string;
+  option_id: string;
+  quantity: number;
+  unit_price: number;
+}
+
+interface SponsorOption {
+  id: string;
+  option_id: string;
+  quantity: number;
+  unit_price: number;
+}
+
+type DetailItem =
+  | { type: "participant"; data: Participant }
+  | { type: "exposant"; data: Exposant; options: ExposantOption[] }
+  | { type: "sponsor"; data: Sponsor; options: SponsorOption[] };
+
+const OPTION_LABELS: Record<string, string> = {
+  kakemono: "Kak\u00e9mono (2m)",
+  presentation: "Pr\u00e9sentation mobile",
+  chaise: "Chaise suppl\u00e9mentaire",
+  table: "Table suppl\u00e9mentaire",
+  comptoir: "Comptoir + tabouret",
+  hotesse: "H\u00f4tesse d'accueil / jour",
+};
+
 function formatCFA(amount: number) {
   return new Intl.NumberFormat("fr-FR").format(amount) + " FCFA";
 }
@@ -108,6 +136,8 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"participants" | "exposants" | "sponsors">("participants");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
   // Check auth
   useEffect(() => {
@@ -138,6 +168,26 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!checkingAuth) fetchData();
   }, [checkingAuth, fetchData]);
+
+  // Open detail panel
+  async function openDetail(type: "participant" | "exposant" | "sponsor", id: string) {
+    setLoadingDetail(true);
+    if (type === "participant") {
+      const item = participants.find((p) => p.id === id);
+      if (item) setSelectedDetail({ type: "participant", data: item });
+      setLoadingDetail(false);
+    } else if (type === "exposant") {
+      const item = exposants.find((e) => e.id === id);
+      const { data: opts } = await supabase.from("exposant_options").select("*").eq("exposant_id", id);
+      if (item) setSelectedDetail({ type: "exposant", data: item, options: opts ?? [] });
+      setLoadingDetail(false);
+    } else {
+      const item = sponsors.find((s) => s.id === id);
+      const { data: opts } = await supabase.from("sponsor_options").select("*").eq("sponsor_id", id);
+      if (item) setSelectedDetail({ type: "sponsor", data: item, options: opts ?? [] });
+      setLoadingDetail(false);
+    }
+  }
 
   // Logout
   async function handleLogout() {
@@ -353,12 +403,13 @@ export default function AdminDashboard() {
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Secteur</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Jours</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date Inscription</th>
+                      <th className="px-6 md:px-8 py-4"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredParticipants.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={8} className="px-6 md:px-8 py-20 text-center text-slate-400">
                           {search ? "Aucun participant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
@@ -380,6 +431,15 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
+                          <td className="px-4 py-4">
+                            <button
+                              onClick={() => openDetail("participant", p.id)}
+                              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-full transition-all"
+                            >
+                              <Eye size={14} />
+                              Détail
+                            </button>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -399,12 +459,13 @@ export default function AdminDashboard() {
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
+                      <th className="px-6 md:px-8 py-4"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredExposants.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={8} className="px-6 md:px-8 py-20 text-center text-slate-400">
                           {search || statusFilter !== "all" ? "Aucun exposant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
@@ -447,6 +508,15 @@ export default function AdminDashboard() {
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(e.created_at)}
                           </td>
+                          <td className="px-4 py-4">
+                            <button
+                              onClick={() => openDetail("exposant", e.id)}
+                              className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-800 hover:bg-violet-50 px-3 py-1.5 rounded-full transition-all"
+                            >
+                              <Eye size={14} />
+                              Détail
+                            </button>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -465,12 +535,13 @@ export default function AdminDashboard() {
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
                       <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
+                      <th className="px-6 md:px-8 py-4"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredSponsors.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
                           {search || statusFilter !== "all" ? "Aucun sponsor trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
@@ -515,6 +586,15 @@ export default function AdminDashboard() {
                           <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(s.created_at)}
                           </td>
+                          <td className="px-4 py-4">
+                            <button
+                              onClick={() => openDetail("sponsor", s.id)}
+                              className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 hover:text-amber-800 hover:bg-amber-50 px-3 py-1.5 rounded-full transition-all"
+                            >
+                              <Eye size={14} />
+                              Détail
+                            </button>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -525,6 +605,192 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {/* DETAIL DRAWER */}
+      {selectedDetail && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelectedDetail(null)} />
+          {/* Panel */}
+          <div className="relative z-10 w-full max-w-lg h-full bg-white shadow-2xl overflow-y-auto flex flex-col">
+            {/* Header */}
+            <div className="sticky top-0 z-10 bg-[#0d1b2a] text-white px-6 py-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-1">
+                  {selectedDetail.type === "participant" ? "Participant" : selectedDetail.type === "exposant" ? "Exposant" : "Sponsor"}
+                </p>
+                <h2 className="text-lg font-bold">
+                  {selectedDetail.type === "participant"
+                    ? `${(selectedDetail.data as Participant).first_name} ${(selectedDetail.data as Participant).last_name}`
+                    : (selectedDetail.data as Exposant | Sponsor).company_name}
+                </h2>
+              </div>
+              <button onClick={() => setSelectedDetail(null)} className="p-2 rounded-full hover:bg-white/10 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 px-6 py-6 space-y-6">
+              {/* PARTICIPANT DETAIL */}
+              {selectedDetail.type === "participant" && (() => {
+                const p = selectedDetail.data as Participant;
+                return (
+                  <>
+                    <Section title="Informations personnelles">
+                      <Row icon={<UserCircle size={14} />} label="Nom complet" value={`${p.first_name} ${p.last_name}`} />
+                      <Row icon={<Mail size={14} />} label="Email" value={p.email} />
+                      <Row icon={<Phone size={14} />} label="Téléphone" value={p.phone} />
+                      <Row icon={<Briefcase size={14} />} label="Fonction" value={p.fonction ?? "—"} />
+                      <Row icon={<Building2 size={14} />} label="Entreprise" value={p.company ?? "—"} />
+                      <Row icon={<Package size={14} />} label="Secteur" value={p.sector ?? "—"} />
+                    </Section>
+                    <Section title="Participation">
+                      <div className="flex gap-3">
+                        {p.jour1 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 1 — 18 Sept.</span>}
+                        {p.jour2 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 2 — 19 Sept.</span>}
+                      </div>
+                    </Section>
+                    {p.source && (
+                      <Section title="Source">
+                        <p className="text-sm text-slate-600">{p.source}</p>
+                      </Section>
+                    )}
+                    <Section title="Inscription">
+                      <Row icon={<Calendar size={14} />} label="Date" value={formatDate(p.created_at)} />
+                    </Section>
+                  </>
+                );
+              })()}
+
+              {/* EXPOSANT DETAIL */}
+              {selectedDetail.type === "exposant" && (() => {
+                const e = selectedDetail.data as Exposant;
+                const opts = selectedDetail.options as ExposantOption[];
+                return (
+                  <>
+                    <Section title="Entreprise">
+                      <Row icon={<Building2 size={14} />} label="Entreprise" value={e.company_name} />
+                      <Row icon={<UserCircle size={14} />} label="Contact" value={e.contact_name} />
+                      <Row icon={<Mail size={14} />} label="Email" value={e.email} />
+                      <Row icon={<Phone size={14} />} label="Téléphone" value={e.phone} />
+                      <Row icon={<Package size={14} />} label="Secteur" value={e.sector ?? "—"} />
+                    </Section>
+                    <Section title="Stand & Options">
+                      <Row icon={<MapPin size={14} />} label="Type de stand" value={e.stand_type} />
+                      <Row icon={<DollarSign size={14} />} label="Prix du stand" value={formatCFA(e.stand_price)} />
+                      <Row label="B2B" value={e.want_b2b ? "Oui" : "Non"} />
+                      {opts.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Options sélectionnées</p>
+                          <div className="rounded-lg border border-slate-100 overflow-hidden">
+                            {opts.map((o) => (
+                              <div key={o.id} className="flex justify-between items-center px-4 py-2.5 even:bg-slate-50">
+                                <span className="text-sm text-slate-700">{OPTION_LABELS[o.option_id] ?? o.option_id} × {o.quantity}</span>
+                                <span className="text-sm font-bold text-slate-900">{formatCFA(o.unit_price * o.quantity)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </Section>
+                    {e.description && (
+                      <Section title="Description / Activité">
+                        <p className="text-sm text-slate-600 leading-relaxed">{e.description}</p>
+                      </Section>
+                    )}
+                    <Section title="Récapitulatif financier">
+                      <Row label="Options sous-total" value={formatCFA(e.options_total)} />
+                      <div className="border-t border-slate-200 mt-2 pt-2">
+                        <Row label="Total TTC" value={formatCFA(e.grand_total)} bold />
+                      </div>
+                    </Section>
+                    <Section title="Statut & Date">
+                      <Row label="Statut" value={STATUS_LABELS[e.status]?.label ?? e.status} />
+                      <Row icon={<Calendar size={14} />} label="Inscription" value={formatDate(e.created_at)} />
+                    </Section>
+                  </>
+                );
+              })()}
+
+              {/* SPONSOR DETAIL */}
+              {selectedDetail.type === "sponsor" && (() => {
+                const s = selectedDetail.data as Sponsor;
+                const opts = selectedDetail.options as SponsorOption[];
+                return (
+                  <>
+                    <Section title="Entreprise">
+                      <Row icon={<Building2 size={14} />} label="Entreprise" value={s.company_name} />
+                      <Row icon={<UserCircle size={14} />} label="Contact" value={s.contact_name} />
+                      <Row label="Fonction" value={s.fonction ?? "—"} />
+                      <Row icon={<Mail size={14} />} label="Email" value={s.email} />
+                      <Row icon={<Phone size={14} />} label="Téléphone" value={s.phone} />
+                      {s.website && <Row icon={<Globe size={14} />} label="Site web" value={s.website} />}
+                    </Section>
+                    <Section title="Pack & Options">
+                      <Row icon={<Package size={14} />} label="Pack" value={s.pack_type.toUpperCase()} />
+                      <Row icon={<DollarSign size={14} />} label="Prix du pack" value={formatCFA(s.pack_price)} />
+                      {opts.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Options sélectionnées</p>
+                          <div className="rounded-lg border border-slate-100 overflow-hidden">
+                            {opts.map((o) => (
+                              <div key={o.id} className="flex justify-between items-center px-4 py-2.5 even:bg-slate-50">
+                                <span className="text-sm text-slate-700">{OPTION_LABELS[o.option_id] ?? o.option_id} × {o.quantity}</span>
+                                <span className="text-sm font-bold text-slate-900">{formatCFA(o.unit_price * o.quantity)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </Section>
+                    <Section title="Récapitulatif financier">
+                      <Row label="Options sous-total" value={formatCFA(s.options_total)} />
+                      <div className="border-t border-slate-200 mt-2 pt-2">
+                        <Row label="Total TTC" value={formatCFA(s.grand_total)} bold />
+                      </div>
+                    </Section>
+                    <Section title="Statut & Date">
+                      <Row label="Statut" value={STATUS_LABELS[s.status]?.label ?? s.status} />
+                      <Row icon={<Calendar size={14} />} label="Inscription" value={formatDate(s.created_at)} />
+                    </Section>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {loadingDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+          <div className="bg-white rounded-xl shadow-xl p-6 flex items-center gap-3">
+            <Loader2 className="animate-spin text-slate-600" size={20} />
+            <span className="text-sm font-medium text-slate-700">Chargement des détails…</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Helper sub-components ── */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pb-1 border-b border-slate-100">{title}</h3>
+      <div className="space-y-2.5">{children}</div>
+    </div>
+  );
+}
+
+function Row({ icon, label, value, bold }: { icon?: React.ReactNode; label: string; value: string; bold?: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center gap-1.5 text-xs text-slate-400 min-w-[120px] shrink-0">
+        {icon}
+        {label}
+      </div>
+      <span className={`text-sm text-right break-all ${bold ? "font-extrabold text-slate-900" : "text-slate-700"}`}>{value}</span>
     </div>
   );
 }

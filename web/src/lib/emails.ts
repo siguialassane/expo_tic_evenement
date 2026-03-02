@@ -69,6 +69,27 @@ export async function sendParticipantConfirmation(data: {
     <p style="font-size:14px;color:#333333;line-height:1.7;margin:0 0 16px;">
       Vous recevrez prochainement un second email contenant votre <strong>badge d&rsquo;acc&egrave;s</strong>, le <strong>programme d&eacute;taill&eacute;</strong> de l&rsquo;&eacute;v&eacute;nement ainsi que d&rsquo;autres informations pratiques. Nous vous invitons &agrave; rester attentif &agrave; vos messages.
     </p>
+
+    <!-- Boutons d'action -->
+    <table cellpadding="0" cellspacing="0" width="100%" style="margin:28px 0;">
+      <tr>
+        <td style="padding:0 8px 0 0;">
+          <a href="https://maps.app.goo.gl/z16H1Bc8ZD17oi9u8"
+             target="_blank"
+             style="display:block;text-align:center;background:#0d1b2a;color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;padding:13px 20px;letter-spacing:0.5px;">
+            Voir l&rsquo;itin&eacute;raire
+          </a>
+        </td>
+        <td style="padding:0 0 0 8px;">
+          <a href="https://expo-tic-evenement.vercel.app/programme-abidjan-expo-tic-2026.pdf"
+             target="_blank"
+             download
+             style="display:block;text-align:center;background:#ffffff;color:#0d1b2a;font-size:13px;font-weight:600;text-decoration:none;padding:12px 20px;letter-spacing:0.5px;border:1.5px solid #0d1b2a;">
+            T&eacute;l&eacute;charger le programme
+          </a>
+        </td>
+      </tr>
+    </table>
     <p style="font-size:14px;color:#333333;line-height:1.7;margin:0 0 32px;">
       Dans l&rsquo;attente de vous accueillir, nous vous adressons nos cordiales salutations.
     </p>
