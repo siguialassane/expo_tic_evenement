@@ -516,10 +516,12 @@ export default function Home() {
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Partenaires officiels</h2>
             </div>
             <div className="flex flex-wrap gap-12 sm:gap-20 items-center justify-center">
-              <Image src="/gotic_new.png" alt="GOTIG" width={220} height={110} className="object-contain max-h-28" />
-              <Image src="/dsi_club.png" alt="LubDSI" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/gotic_new.png" alt="GOTIC" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/dsi_club.png" alt="Club DSI" width={220} height={110} className="object-contain max-h-28" />
               <Image src="/abidjanmagazine.png" alt="Abidjan Magazine" width={160} height={110} className="object-contain max-h-28" />
               <Image src="/exias.png" alt="EXIAS" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/LOGO-off.jpg.jpeg" alt="La Maison de l'Entrepreneur" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/LOGO PDE 1(1).jpg.jpeg" alt="PDE - Programme de Développement Entrepreneurial" width={220} height={110} className="object-contain max-h-28" />
             </div>
           </div>
         </section>
