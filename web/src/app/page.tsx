@@ -192,7 +192,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
                   <MapPin size={16} className="text-primary shrink-0" />
-                  <span className="text-white text-sm font-semibold">CRRAE-Rivera, Bonoumin, Abidjan</span>
+                  <span className="text-white text-sm font-semibold">CRRAE-Riviera, Bonoumin, Abidjan</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
                   <Users size={16} className="text-primary shrink-0" />
@@ -278,8 +278,8 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 { img: "/images/conference.jpg", title: "Conférences & Panels", desc: "Keynotes, tables rondes avec des leaders du secteur TIC africain et international." },
-                { img: "/images/exhibition.jpg", title: "Stands & Expositions", desc: "Visitez de nombreux stands et découvrez les dernières solutions, produits et innovations présentés par les acteurs TIC." },
-                { img: "/images/networking.jpg", title: "Networking & B2B", desc: "Rencontres qualifiées entre décideurs, investisseurs et porteurs de projets." },
+                { img: "/stand.png", title: "Stands & Expositions", desc: "Visitez de nombreux stands et découvrez les dernières solutions, produits et innovations présentés par les acteurs TIC." },
+                { img: "/networking.png", title: "Networking & B2B", desc: "Rencontres qualifiées entre décideurs, investisseurs et porteurs de projets." },
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -538,7 +538,7 @@ export default function Home() {
                   height={40}
                   className="rounded-lg border border-white/10 mb-3"
                 />
-                <p className="text-sm text-slate-400">7 - 8 Mai 2026 — CRRAE-Rivera, Bonoumin, Abidjan</p>
+                <p className="text-sm text-slate-400">7 - 8 Mai 2026 — CRRAE-Riviera, Bonoumin, Abidjan</p>
               </div>
               <div className="flex flex-col gap-2 text-sm">
                 <a href="mailto:commercial@differencegroup.info" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">

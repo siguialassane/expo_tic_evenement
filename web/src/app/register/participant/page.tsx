@@ -148,7 +148,7 @@ export default function ParticipantRegister() {
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Inscription Participant</h1>
           <p className="text-slate-500 mt-2 max-w-lg mx-auto">
-            Obtenez votre pass gratuit pour Abidjan Expo Tic 2026 — 7 et 8 mai, CRRAE-Rivera, Bonoumin, Abidjan.
+            Obtenez votre pass gratuit pour Abidjan Expo Tic 2026 — 7 et 8 mai, CRRAE-Riviera, Bonoumin, Abidjan.
           </p>
         </div>
 
