@@ -547,7 +547,7 @@ export default function Home() {
                   <Mail size={16} /> commercial@differencegroup.info
                 </a>
                 <a href="tel:+2272722308348" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
-                  <Phone size={16} /> 27 22 30 83 48 &nbsp;/&nbsp; 05 65 17 36 63 &nbsp;/&nbsp; 07 47 51 51 62
+                  <Phone size={16} /> 27 22 30 83 48 &nbsp;/&nbsp; 05 65 17 36 63 &nbsp;/&nbsp; 05 02 87 67 05
                 </a>
                 <p className="text-slate-500 text-xs mt-1">Cocody deux plateaux vallon, Rue BURIDA &mdash; Abidjan</p>
               </div>
