@@ -18,7 +18,7 @@ function emailShell(body: string): string {
     <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #d6d6d6;">
       <div style="background:#0d1b2a;padding:28px 40px;">
         <p style="margin:0;color:#ffffff;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;">Abidjan Expo Tic 2026</p>
-        <p style="margin:5px 0 0;color:#8899aa;font-size:11px;letter-spacing:1px;text-transform:uppercase;">7 &amp; 8 Mai 2026 &mdash; Sofitel H&ocirc;tel Ivoire, Abidjan</p>
+        <p style="margin:5px 0 0;color:#8899aa;font-size:11px;letter-spacing:1px;text-transform:uppercase;">7 &amp; 8 Mai 2026 &mdash; CRRAE-Rivera, Bonoumin, Abidjan</p>
       </div>
       <div style="padding:40px;">${body}</div>
       <div style="background:#f8f8f8;border-top:1px solid #e0e0e0;padding:20px 40px;">
@@ -62,7 +62,7 @@ export async function sendParticipantConfirmation(data: {
     ${infoBlock(
       infoLine("Jours s&eacute;lectionn&eacute;s", joursText) +
       infoLine("Date", "7 &amp; 8 Mai 2026") +
-      infoLine("Lieu", "Sofitel H&ocirc;tel Ivoire, Abidjan") +
+      infoLine("Lieu", "CRRAE-Rivera, Bonoumin, Abidjan") +
       infoLine("Participation", "Gratuite")
     )}
 

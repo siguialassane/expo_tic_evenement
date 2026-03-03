@@ -7,7 +7,7 @@ import {
   ArrowRight, UserCircle, Briefcase, Building2,
   MapPin, CalendarDays, Users,
   Target, CheckCircle2, ChevronRight, Mail, Phone, Calendar,
-  Wifi, Shield, Cpu, Rocket, Globe, Zap, Menu, X
+  Wifi, Cpu, Rocket, Globe, Menu, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -35,7 +35,7 @@ export default function Home() {
 
   /* ---------- DATA ---------- */
   const stats = [
-    { value: "5 000+", label: "Visiteurs attendus" },
+    { value: "+5000", label: "Visiteurs attendus" },
     { value: "4 packs", label: "Sponsoring disponibles" },
     { value: "2 jours", label: "Conférences & Panels" },
     { value: "100%", label: "Secteur TIC & Numérique" },
@@ -43,11 +43,9 @@ export default function Home() {
 
   const highlights = [
     { icon: Wifi, title: "Connectivité", text: "IoT, 5G, Smart City et infrastructures de demain" },
-    { icon: Shield, title: "Cybersécurité", text: "Protection des données, conformité et résilience" },
     { icon: Cpu, title: "Intelligence Artificielle", text: "IA générative, automatisation et aide à la décision" },
     { icon: Rocket, title: "Start-ups & Innovation", text: "Pitchs, incubateurs et écosystème entrepreneurial" },
     { icon: Globe, title: "Transformation Digitale", text: "Cloud, ERP, e-gov et modernisation des process" },
-    { icon: Zap, title: "FinTech & Mobile Money", text: "Solutions de paiement, inclusion financière et néobanques" },
   ];
 
   const advantages = [
@@ -194,7 +192,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
                   <MapPin size={16} className="text-primary shrink-0" />
-                  <span className="text-white text-sm font-semibold">Sofitel Hôtel Ivoire, Abidjan</span>
+                  <span className="text-white text-sm font-semibold">CRRAE-Rivera, Bonoumin, Abidjan</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-full border border-white/10">
                   <Users size={16} className="text-primary shrink-0" />
@@ -280,7 +278,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 { img: "/images/conference.jpg", title: "Conférences & Panels", desc: "Keynotes, tables rondes avec des leaders du secteur TIC africain et international." },
-                { img: "/images/exhibition.jpg", title: "Exposition Technologique", desc: "Des stands présentant les dernières solutions et innovations des acteurs TIC." },
+                { img: "/images/exhibition.jpg", title: "Stands & Expositions", desc: "Visitez de nombreux stands et découvrez les dernières solutions, produits et innovations présentés par les acteurs TIC." },
                 { img: "/images/networking.jpg", title: "Networking & B2B", desc: "Rencontres qualifiées entre décideurs, investisseurs et porteurs de projets." },
               ].map((item, i) => (
                 <motion.div
@@ -480,7 +478,7 @@ export default function Home() {
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Sponsor</h3>
                   <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Associez votre image à l'événement et bénéficiez d'une visibilité maximale auprès des acteurs du secteur TIC.</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Dès 3M FCFA</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Payant</span>
                     <span className="text-amber-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                       Voir les packs <ArrowRight size={16} />
                     </span>
@@ -497,7 +495,7 @@ export default function Home() {
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Exposant</h3>
                   <p className="text-sm text-slate-500 flex-1 mb-6 leading-relaxed">Réservez votre stand pour présenter vos produits et solutions face à des milliers de visiteurs qualifiés.</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-3 py-1 rounded-full">Dès 300K FCFA</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-3 py-1 rounded-full">Payant</span>
                     <span className="text-violet-600 font-bold flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                       Réserver <ArrowRight size={16} />
                     </span>
@@ -511,15 +509,17 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════════ */}
         {/*  PARTENAIRES                                                   */}
         {/* ═══════════════════════════════════════════════════════════════ */}
-        <section className="py-12 sm:py-16 bg-slate-50 px-4 sm:px-6 border-y border-slate-100">
-          <div className="max-w-6xl mx-auto text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 sm:mb-10">Partenaires officiels</p>
-            <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 md:gap-16">
-              {["GOTIG", "LubDSI", "Abidjan Magazine", "EXIAS"].map((partner, idx) => (
-                <div key={idx} className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-300 hover:text-primary transition-colors cursor-default select-none">
-                  {partner}
-                </div>
-              ))}
+        <section className="py-14 sm:py-20 bg-white px-4 sm:px-6 border-y border-slate-100">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-10 sm:mb-14">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Ils nous font confiance</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Partenaires officiels</h2>
+            </div>
+            <div className="flex flex-wrap gap-12 sm:gap-20 items-center justify-center">
+              <Image src="/gotic_new.png" alt="GOTIG" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/dsi_club.png" alt="LubDSI" width={220} height={110} className="object-contain max-h-28" />
+              <Image src="/abidjanmagazine.png" alt="Abidjan Magazine" width={160} height={110} className="object-contain max-h-28" />
+              <Image src="/exias.png" alt="EXIAS" width={220} height={110} className="object-contain max-h-28" />
             </div>
           </div>
         </section>
@@ -538,7 +538,7 @@ export default function Home() {
                   height={40}
                   className="rounded-lg border border-white/10 mb-3"
                 />
-                <p className="text-sm text-slate-400">7 - 8 Mai 2026 — Sofitel Hôtel Ivoire, Abidjan</p>
+                <p className="text-sm text-slate-400">7 - 8 Mai 2026 — CRRAE-Rivera, Bonoumin, Abidjan</p>
               </div>
               <div className="flex flex-col gap-2 text-sm">
                 <a href="mailto:commercial@differencegroup.info" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors">
