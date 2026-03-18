@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Users, Building2, Briefcase, DollarSign,
   LogOut, Loader2, Search, RefreshCw,
-  UserCircle, ChevronDown, Eye, X, MapPin, Phone, Mail, Globe, Calendar, Package,
+  UserCircle, ChevronDown, ChevronLeft, ChevronRight, Eye, X, MapPin, Phone, Mail, Globe, Calendar, Package,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -139,6 +139,10 @@ export default function AdminDashboard() {
   const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
 
+  // Pagination
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Check auth
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -214,6 +218,15 @@ export default function AdminDashboard() {
   const totalCA =
     exposants.reduce((sum, e) => sum + e.grand_total, 0) +
     sponsors.reduce((sum, s) => sum + s.grand_total, 0);
+
+  // Pagination helper
+  function paginate<T>(items: T[]) {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }
+  function totalPages(items: { length: number }) {
+    return Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  }
 
   // Search filter
   const filteredParticipants = participants.filter((p) => {
@@ -333,7 +346,7 @@ export default function AdminDashboard() {
               ] as const).map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => { setActiveTab(tab.key); setSearch(""); setStatusFilter("all"); }}
+                  onClick={() => { setActiveTab(tab.key); setSearch(""); setStatusFilter("all"); setCurrentPage(1); }}
                   className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.key
                       ? `border-${tab.color}-600 text-${tab.color}-600`
@@ -362,7 +375,7 @@ export default function AdminDashboard() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                 placeholder="Rechercher par nom, email, entreprise..."
                 className="h-9 pl-9 bg-white"
               />
@@ -371,7 +384,7 @@ export default function AdminDashboard() {
               <div className="relative">
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                   className="appearance-none h-9 pl-3 pr-8 rounded-md border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="all">Tous les statuts</option>
@@ -393,50 +406,51 @@ export default function AdminDashboard() {
             <div className="overflow-x-auto">
               {/* PARTICIPANTS TABLE */}
               {activeTab === "participants" && (
+                <>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nom complet</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Email</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Téléphone</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Entreprise</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Secteur</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Jours</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date Inscription</th>
-                      <th className="px-6 md:px-8 py-4"></th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nom complet</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Téléphone</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Entreprise</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Secteur</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Jours</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date Inscription</th>
+                      <th className="px-4 py-3 w-28"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredParticipants.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={8} className="px-4 py-16 text-center text-slate-400">
                           {search ? "Aucun participant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
-                      filteredParticipants.map((p) => (
+                      paginate(filteredParticipants).map((p) => (
                         <tr key={p.id} className="hover:bg-slate-50/80 transition-colors group">
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">{p.first_name} {p.last_name}</div>
-                            <div className="text-xs text-slate-500 sm:hidden block mt-1">{p.email}</div>
+                          <td className="px-4 py-3">
+                            <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors whitespace-nowrap">{p.first_name} {p.last_name}</div>
+                            <div className="text-xs text-slate-500 sm:hidden block mt-0.5">{p.email}</div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden sm:table-cell">{p.email}</td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden md:table-cell whitespace-nowrap">{p.phone}</td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-600 hidden lg:table-cell">{p.company ?? "—"}</td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-500 hidden xl:table-cell max-w-[200px] truncate" title={p.sector || ""}>{p.sector ?? "—"}</td>
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <div className="flex gap-2">
-                              {p.jour1 && <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">Jour 1</span>}
-                              {p.jour2 && <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">Jour 2</span>}
+                          <td className="px-4 py-3 text-slate-600 hidden sm:table-cell">{p.email}</td>
+                          <td className="px-4 py-3 text-slate-600 hidden md:table-cell whitespace-nowrap">{p.phone}</td>
+                          <td className="px-4 py-3 text-slate-600 hidden lg:table-cell">{p.company ?? "—"}</td>
+                          <td className="px-4 py-3 text-slate-500 hidden xl:table-cell max-w-[180px] truncate" title={p.sector || ""}>{p.sector ?? "—"}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-nowrap gap-1">
+                              {p.jour1 && <span className="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">Jour 1</span>}
+                              {p.jour2 && <span className="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">Jour 2</span>}
                             </div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
-                          <td className="px-4 py-4 text-right">
+                          <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
+                          <td className="px-4 py-3 text-right">
                             <button
                               onClick={() => openDetail("participant", p.id)}
-                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm whitespace-nowrap"
                             >
-                              <Eye size={16} />
+                              <Eye size={14} />
                               Détails
                             </button>
                           </td>
@@ -445,56 +459,95 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+                {/* Pagination participants */}
+                {totalPages(filteredParticipants) > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                    <span className="text-xs text-slate-500">
+                      {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredParticipants.length)}–{Math.min(currentPage * PAGE_SIZE, filteredParticipants.length)} sur {filteredParticipants.length}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      {Array.from({ length: totalPages(filteredParticipants) }, (_, i) => i + 1).map((pg) => (
+                        <button
+                          key={pg}
+                          onClick={() => setCurrentPage(pg)}
+                          className={`min-w-[28px] h-7 text-xs rounded-md border ${
+                            pg === currentPage
+                              ? "bg-blue-600 text-white border-blue-600 font-bold"
+                              : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {pg}
+                        </button>
+                      ))}
+                      <button
+                        disabled={currentPage === totalPages(filteredParticipants)}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                </>
               )}
 
               {/* EXPOSANTS TABLE */}
               {activeTab === "exposants" && (
+                <>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Stand</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">B2B</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
-                      <th className="px-6 md:px-8 py-4"></th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Stand</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">B2B</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
+                      <th className="px-4 py-3 w-28"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredExposants.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={8} className="px-4 py-16 text-center text-slate-400">
                           {search || statusFilter !== "all" ? "Aucun exposant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
-                      filteredExposants.map((e) => (
+                      paginate(filteredExposants).map((e) => (
                         <tr key={e.id} className="hover:bg-slate-50/80 transition-colors group">
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <div className="font-bold text-slate-900 group-hover:text-violet-700 transition-colors">{e.company_name}</div>
-                            <div className="text-sm text-slate-500 mt-1">{e.contact_name}</div>
+                          <td className="px-4 py-3">
+                            <div className="font-bold text-slate-900 group-hover:text-violet-700 transition-colors whitespace-nowrap">{e.company_name}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">{e.contact_name}</div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 hidden lg:table-cell">
+                          <td className="px-4 py-3 hidden lg:table-cell">
                             <div className="text-slate-700">{e.email}</div>
-                            <div className="text-xs text-slate-400 mt-1">{e.phone}</div>
+                            <div className="text-xs text-slate-400 mt-0.5">{e.phone}</div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <span className="text-xs px-2.5 py-1 rounded-md bg-violet-50 text-violet-700 border border-violet-100 font-bold whitespace-nowrap">
+                          <td className="px-4 py-3">
+                            <span className="text-xs px-2 py-1 rounded-md bg-violet-50 text-violet-700 border border-violet-100 font-bold whitespace-nowrap">
                               {e.stand_type}
                             </span>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 hidden xl:table-cell">
+                          <td className="px-4 py-3 hidden xl:table-cell">
                             {e.want_b2b 
                               ? <span className="text-[10px] uppercase font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Oui</span> 
                               : <span className="text-[10px] uppercase font-bold text-slate-400">Non</span>
                             }
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 font-extrabold text-slate-900 whitespace-nowrap">
+                          <td className="px-4 py-3 font-extrabold text-slate-900 whitespace-nowrap">
                             {formatCFA(e.grand_total)}
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5">
+                          <td className="px-4 py-3">
                             <select
                               value={e.status}
                               onChange={(ev) => updateExposantStatus(e.id, ev.target.value)}
@@ -505,15 +558,15 @@ export default function AdminDashboard() {
                               <option value="cancelled">Annulé</option>
                             </select>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
+                          <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(e.created_at)}
                           </td>
-                          <td className="px-4 py-4 text-right">
+                          <td className="px-4 py-3 text-right">
                             <button
                               onClick={() => openDetail("exposant", e.id)}
-                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors shadow-sm"
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors shadow-sm whitespace-nowrap"
                             >
-                              <Eye size={16} />
+                              <Eye size={14} />
                               Détails
                             </button>
                           </td>
@@ -522,42 +575,81 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+                {/* Pagination exposants */}
+                {totalPages(filteredExposants) > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                    <span className="text-xs text-slate-500">
+                      {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredExposants.length)}–{Math.min(currentPage * PAGE_SIZE, filteredExposants.length)} sur {filteredExposants.length}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      {Array.from({ length: totalPages(filteredExposants) }, (_, i) => i + 1).map((pg) => (
+                        <button
+                          key={pg}
+                          onClick={() => setCurrentPage(pg)}
+                          className={`min-w-[28px] h-7 text-xs rounded-md border ${
+                            pg === currentPage
+                              ? "bg-violet-600 text-white border-violet-600 font-bold"
+                              : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {pg}
+                        </button>
+                      ))}
+                      <button
+                        disabled={currentPage === totalPages(filteredExposants)}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                </>
               )}
 
               {/* SPONSORS TABLE */}
               {activeTab === "sponsors" && (
+                <>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pack</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
-                      <th className="px-6 md:px-8 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
-                      <th className="px-6 md:px-8 py-4"></th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Entreprise / Contact</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Email / Tél</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pack</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Total (TTC)</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">Date Inscription</th>
+                      <th className="px-4 py-3 w-28"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filteredSponsors.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-6 md:px-8 py-20 text-center text-slate-400">
+                        <td colSpan={7} className="px-4 py-16 text-center text-slate-400">
                           {search || statusFilter !== "all" ? "Aucun sponsor trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
-                      filteredSponsors.map((s) => (
+                      paginate(filteredSponsors).map((s) => (
                         <tr key={s.id} className="hover:bg-slate-50/80 transition-colors group">
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <div className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{s.company_name}</div>
-                            <div className="text-sm text-slate-500 mt-1">{s.contact_name}</div>
+                          <td className="px-4 py-3">
+                            <div className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors whitespace-nowrap">{s.company_name}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">{s.contact_name}</div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 hidden lg:table-cell">
+                          <td className="px-4 py-3 hidden lg:table-cell">
                             <div className="text-slate-700">{s.email}</div>
-                            <div className="text-xs text-slate-400 mt-1">{s.phone}</div>
+                            <div className="text-xs text-slate-400 mt-0.5">{s.phone}</div>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5">
-                            <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+                          <td className="px-4 py-3">
+                            <span className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${
                               s.pack_type === "leader"
                                 ? "bg-amber-50 text-amber-700 border-amber-200"
                                 : s.pack_type === "diamant"
@@ -565,14 +657,14 @@ export default function AdminDashboard() {
                                 : s.pack_type === "or"
                                 ? "bg-yellow-50 text-yellow-700 border-yellow-200"
                                 : "bg-orange-50 text-orange-700 border-orange-200"
-                            }`}>
+                            } whitespace-nowrap`}>
                               {s.pack_type}
                             </span>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 font-extrabold text-slate-900 whitespace-nowrap">
+                          <td className="px-4 py-3 font-extrabold text-slate-900 whitespace-nowrap">
                             {formatCFA(s.grand_total)}
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5">
+                          <td className="px-4 py-3">
                             <select
                               value={s.status}
                               onChange={(ev) => updateSponsorStatus(s.id, ev.target.value)}
@@ -583,15 +675,15 @@ export default function AdminDashboard() {
                               <option value="cancelled">Annulé</option>
                             </select>
                           </td>
-                          <td className="px-6 md:px-8 py-4 md:py-5 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
+                          <td className="px-4 py-3 text-slate-400 text-xs hidden md:table-cell whitespace-nowrap">
                             {formatDate(s.created_at)}
                           </td>
-                          <td className="px-4 py-4 text-right">
+                          <td className="px-4 py-3 text-right">
                             <button
                               onClick={() => openDetail("sponsor", s.id)}
-                              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-sm"
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-sm whitespace-nowrap"
                             >
-                              <Eye size={16} />
+                              <Eye size={14} />
                               Détails
                             </button>
                           </td>
@@ -600,6 +692,44 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+                {/* Pagination sponsors */}
+                {totalPages(filteredSponsors) > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                    <span className="text-xs text-slate-500">
+                      {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredSponsors.length)}–{Math.min(currentPage * PAGE_SIZE, filteredSponsors.length)} sur {filteredSponsors.length}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      {Array.from({ length: totalPages(filteredSponsors) }, (_, i) => i + 1).map((pg) => (
+                        <button
+                          key={pg}
+                          onClick={() => setCurrentPage(pg)}
+                          className={`min-w-[28px] h-7 text-xs rounded-md border ${
+                            pg === currentPage
+                              ? "bg-amber-500 text-white border-amber-500 font-bold"
+                              : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {pg}
+                        </button>
+                      ))}
+                      <button
+                        disabled={currentPage === totalPages(filteredSponsors)}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        className="p-1.5 rounded-md border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                </>
               )}
             </div>
           )}
