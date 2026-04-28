@@ -1,0 +1,28 @@
+<svg width="573" height="825" viewBox="0 0 573 825" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="diagonal" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#D7E7AE" stroke-width="1" stroke-opacity="0.9"/>
+    </pattern>
+    <linearGradient id="waveSoft" x1="286.5" y1="530" x2="286.5" y2="730" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FBE8" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#D8F0A4" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="waveMid" x1="286.5" y1="560" x2="286.5" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDF8D4" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#BDE273" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="waveStrong" x1="286.5" y1="580" x2="286.5" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E4F4BE" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#8FCB5C" stop-opacity="0.7"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0.75" y="0.75" width="571.5" height="823.5" rx="28" fill="#FFFDF8" stroke="#2D8A3B" stroke-width="1.5"/>
+  <path d="M1 1H204V197H1V1Z" fill="url(#diagonal)" opacity="0.85"/>
+
+  <path d="M-10 548C56 517 110 566 177 566C240 566 287 606 353 602C432 597 501 538 583 529V825H-10V548Z" fill="url(#waveSoft)"/>
+  <path d="M-14 574C68 542 124 595 200 604C284 614 365 604 432 577C490 553 531 525 587 531V825H-14V574Z" fill="url(#waveMid)"/>
+  <path d="M-16 602C60 575 132 632 241 646C340 659 447 623 587 556V825H-16V602Z" fill="url(#waveStrong)"/>
+  <path d="M0 770C91 741 174 801 286 798C399 795 486 741 573 770V825H0V770Z" fill="#23723C"/>
+  <path d="M0 790C94 761 176 814 286 811C398 808 478 758 573 789V825H0V790Z" fill="#0D6A38"/>
+</svg>

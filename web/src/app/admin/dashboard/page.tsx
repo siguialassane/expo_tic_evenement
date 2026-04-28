@@ -4,15 +4,19 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Users, Building2, Briefcase, DollarSign,
-  LogOut, Loader2, Search, RefreshCw,
+  Loader2, Search, RefreshCw,
   UserCircle, ChevronDown, ChevronLeft, ChevronRight, Eye, X, MapPin, Phone, Mail, Globe, Calendar, Package,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
+import { AdminShell } from "@/components/admin/admin-shell";
+import { useAdminSession } from "@/components/admin/use-admin-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  getParticipantAttendanceStatus,
+  setParticipantAttendanceStatus,
+  useParticipantAttendanceMap,
+} from "@/lib/participant-attendance";
 import { supabase } from "@/lib/supabase";
 
 /* ------------------------------------------------------------------ */
@@ -120,11 +124,8 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
 /* ------------------------------------------------------------------ */
 
 export default function AdminDashboard() {
-  const router = useRouter();
-
-  // Auth
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [userEmail, setUserEmail] = useState("");
+  const { checkingAuth, userEmail, handleLogout } = useAdminSession();
+  const { attendanceMap, reloadAttendanceMap } = useParticipantAttendanceMap();
 
   // Data
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -143,21 +144,8 @@ export default function AdminDashboard() {
   const PAGE_SIZE = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Check auth
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        router.replace("/admin/login");
-      } else {
-        setUserEmail(session.user.email ?? "");
-        setCheckingAuth(false);
-      }
-    });
-  }, [router]);
-
   // Fetch data
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const loadData = useCallback(async () => {
     const [pRes, eRes, sRes] = await Promise.all([
       supabase.from("participants").select("*").order("created_at", { ascending: false }),
       supabase.from("exposants").select("*").order("created_at", { ascending: false }),
@@ -169,9 +157,24 @@ export default function AdminDashboard() {
     setLoading(false);
   }, []);
 
+  const refreshData = useCallback(() => {
+    setLoading(true);
+    void loadData();
+  }, [loadData]);
+
   useEffect(() => {
-    if (!checkingAuth) fetchData();
-  }, [checkingAuth, fetchData]);
+    if (checkingAuth) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      void loadData();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [checkingAuth, loadData]);
 
   // Open detail panel
   async function openDetail(type: "participant" | "exposant" | "sponsor", id: string) {
@@ -193,12 +196,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // Logout
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.replace("/admin/login");
-  }
-
   // Change status
   async function updateExposantStatus(id: string, newStatus: string) {
     await supabase.from("exposants").update({ status: newStatus }).eq("id", id);
@@ -214,10 +211,22 @@ export default function AdminDashboard() {
     );
   }
 
+  const toggleParticipantAttendance = useCallback(async (participantId: string) => {
+    const currentStatus = getParticipantAttendanceStatus(attendanceMap[participantId]);
+    const nextStatus = currentStatus === "present" ? "absent" : "present";
+
+    await setParticipantAttendanceStatus(participantId, nextStatus);
+    await reloadAttendanceMap();
+  }, [attendanceMap, reloadAttendanceMap]);
+
   // Stats
   const totalCA =
     exposants.reduce((sum, e) => sum + e.grand_total, 0) +
     sponsors.reduce((sum, s) => sum + s.grand_total, 0);
+  const presentParticipantsCount = participants.filter((participant) => {
+    return getParticipantAttendanceStatus(attendanceMap[participant.id]) === "present";
+  }).length;
+  const absentParticipantsCount = Math.max(0, participants.length - presentParticipantsCount);
 
   // Pagination helper
   function paginate<T>(items: T[]) {
@@ -268,29 +277,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* HEADER */}
-      <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-[1600px] w-full mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Image src="/expoTic.jpeg" alt="ExpoTic" width={100} height={30} className="object-contain" />
-            </Link>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider hidden sm:inline">Administration</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-700 bg-slate-100 py-1.5 px-3 rounded-full">
-              <UserCircle size={18} className="text-slate-500" />
-              <span className="hidden sm:inline">{userEmail}</span>
-            </div>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors">
-              <LogOut size={14} /> <span className="hidden sm:inline">Déconnexion</span>
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-[1600px] w-full mx-auto px-6 md:px-10 py-8 lg:py-12">
+    <>
+      <AdminShell
+        userEmail={userEmail}
+        onLogout={handleLogout}
+        title="Pilotage des inscriptions"
+        subtitle="Consultez les participants, exposants et sponsors depuis un tableau unique, puis basculez vers le nouveau menu badge quand vous avez besoin d'un visuel nominatif."
+      >
         {/* STATS CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-10">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
@@ -301,6 +294,7 @@ export default function AdminDashboard() {
               <span className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Participants</span>
             </div>
             <p className="text-4xl lg:text-5xl font-extrabold text-slate-900">{participants.length}</p>
+            <p className="mt-3 text-sm text-slate-500">{presentParticipantsCount} présents • {absentParticipantsCount} absents</p>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
@@ -364,7 +358,7 @@ export default function AdminDashboard() {
                 </button>
               ))}
             </div>
-            <Button variant="outline" size="sm" onClick={fetchData} className="gap-2 text-slate-500">
+            <Button variant="outline" size="sm" onClick={refreshData} className="gap-2 text-slate-500">
               <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Actualiser
             </Button>
           </div>
@@ -416,6 +410,7 @@ export default function AdminDashboard() {
                       <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Entreprise</th>
                       <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:table-cell">Secteur</th>
                       <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Jours</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Présence</th>
                       <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date Inscription</th>
                       <th className="px-4 py-3 w-28"></th>
                     </tr>
@@ -423,12 +418,17 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-slate-100">
                     {filteredParticipants.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="px-4 py-16 text-center text-slate-400">
+                        <td colSpan={9} className="px-4 py-16 text-center text-slate-400">
                           {search ? "Aucun participant trouvé." : "Aucune inscription pour le moment."}
                         </td>
                       </tr>
                     ) : (
-                      paginate(filteredParticipants).map((p) => (
+                      paginate(filteredParticipants).map((p) => {
+                        const attendanceRecord = attendanceMap[p.id];
+                        const attendanceStatus = getParticipantAttendanceStatus(attendanceRecord);
+                        const isPresent = attendanceStatus === "present";
+
+                        return (
                         <tr key={p.id} className="hover:bg-slate-50/80 transition-colors group">
                           <td className="px-4 py-3">
                             <div className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors whitespace-nowrap">{p.first_name} {p.last_name}</div>
@@ -444,6 +444,25 @@ export default function AdminDashboard() {
                               {p.jour2 && <span className="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap">Jour 2</span>}
                             </div>
                           </td>
+                          <td className="px-4 py-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                void toggleParticipantAttendance(p.id);
+                              }}
+                              title={attendanceRecord?.firstBadgeDownloadedAt ? `Premier téléchargement du badge: ${formatDate(attendanceRecord.firstBadgeDownloadedAt)}` : "Basculer la présence"}
+                              className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+                                isPresent
+                                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              }`}
+                            >
+                              {isPresent ? "Présent" : "Absent"}
+                            </button>
+                            {attendanceRecord?.firstBadgeDownloadedAt ? (
+                              <div className="mt-1 text-[10px] text-slate-400">Badge téléchargé</div>
+                            ) : null}
+                          </td>
                           <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{formatDate(p.created_at)}</td>
                           <td className="px-4 py-3 text-right">
                             <button
@@ -455,7 +474,7 @@ export default function AdminDashboard() {
                             </button>
                           </td>
                         </tr>
-                      ))
+                      )})
                     )}
                   </tbody>
                 </table>
@@ -734,7 +753,7 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
-      </div>
+      </AdminShell>
 
       {/* DETAIL MODAL */}
       {selectedDetail && (
@@ -764,6 +783,8 @@ export default function AdminDashboard() {
               {/* PARTICIPANT DETAIL */}
               {selectedDetail.type === "participant" && (() => {
                 const p = selectedDetail.data as Participant;
+                const attendanceRecord = attendanceMap[p.id];
+                const attendanceStatus = getParticipantAttendanceStatus(attendanceRecord);
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <div className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
@@ -786,6 +807,12 @@ export default function AdminDashboard() {
                           <div className="col-span-2 flex flex-wrap gap-2">
                             {p.jour1 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 1 — 18 Sept.</span>}
                             {p.jour2 && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Jour 2 — 19 Sept.</span>}
+                          </div>
+                          <div className="col-span-2 mt-4 flex flex-wrap items-center gap-3">
+                            <Row icon={<Calendar size={14} />} label="Présence" value={attendanceStatus === "present" ? "Présent" : "Absent"} />
+                            {attendanceRecord?.firstBadgeDownloadedAt ? (
+                              <Row icon={<Calendar size={14} />} label="Premier badge" value={formatDate(attendanceRecord.firstBadgeDownloadedAt)} />
+                            ) : null}
                           </div>
                         </Section>
                       </div>
@@ -928,7 +955,7 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
