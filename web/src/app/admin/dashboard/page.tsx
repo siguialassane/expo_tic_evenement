@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Users, Building2, Briefcase, DollarSign,
-  Loader2, Search, RefreshCw,
+  Download, FileSpreadsheet, Loader2, Search, RefreshCw,
   UserCircle, ChevronDown, ChevronLeft, ChevronRight, Eye, X, MapPin, Phone, Mail, Globe, Calendar, Package,
 } from "lucide-react";
 
@@ -113,6 +113,20 @@ function formatDate(iso: string) {
   });
 }
 
+function formatDateTimeForExport(iso: string) {
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatBooleanLabel(value: boolean) {
+  return value ? "Oui" : "Non";
+}
+
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   pending: { label: "En attente", className: "bg-yellow-100 text-yellow-800" },
   confirmed: { label: "Confirmé", className: "bg-green-100 text-green-800" },
@@ -139,6 +153,9 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedDetail, setSelectedDetail] = useState<DetailItem | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [exportErrorMessage, setExportErrorMessage] = useState<string | null>(null);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   // Pagination
   const PAGE_SIZE = 10;
@@ -268,6 +285,164 @@ export default function AdminDashboard() {
     return matchSearch && matchStatus;
   });
 
+  const participantExportRows = useMemo(() => {
+    return participants.map((participant) => {
+      const attendanceRecord = attendanceMap[participant.id];
+      const attendanceStatus = getParticipantAttendanceStatus(attendanceRecord);
+
+      return {
+        "Nom complet": `${participant.first_name} ${participant.last_name}`.trim(),
+        Email: participant.email,
+        Téléphone: participant.phone,
+        Entreprise: participant.company ?? "",
+        Fonction: participant.fonction ?? "",
+        Secteur: participant.sector ?? "",
+        "Jour 1": formatBooleanLabel(participant.jour1),
+        "Jour 2": formatBooleanLabel(participant.jour2),
+        Présence: attendanceStatus === "present" ? "Présent" : "Absent",
+        "Badge téléchargé": attendanceRecord?.firstBadgeDownloadedAt ? "Oui" : "Non",
+        "Date badge": attendanceRecord?.firstBadgeDownloadedAt
+          ? formatDateTimeForExport(attendanceRecord.firstBadgeDownloadedAt)
+          : "",
+        "Date inscription": formatDateTimeForExport(participant.created_at),
+      };
+    });
+  }, [attendanceMap, participants]);
+
+  const handleDownloadParticipantsPdf = useCallback(async () => {
+    if (participantExportRows.length === 0) {
+      setExportErrorMessage("Aucun participant à exporter au format PDF.");
+      return;
+    }
+
+    try {
+      setIsExportingPdf(true);
+      setExportErrorMessage(null);
+
+      const [{ jsPDF }, { default: autoTable }] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
+      const exportDate = new Date().toISOString().slice(0, 10);
+      const pdf = new jsPDF({
+        format: "a4",
+        orientation: "landscape",
+        unit: "mm",
+      });
+
+      pdf.setFontSize(16);
+      pdf.text("Liste complete des participants", 14, 14);
+      pdf.setFontSize(9);
+      pdf.setTextColor(100);
+      pdf.text(`Export: ${formatDateTimeForExport(new Date().toISOString())}`, 14, 20);
+      pdf.text(`Resultats: ${participantExportRows.length}`, 14, 25);
+
+      autoTable(pdf, {
+        startY: 30,
+        head: [[
+          "Nom complet",
+          "Email",
+          "Telephone",
+          "Entreprise",
+          "Fonction",
+          "Secteur",
+          "J1",
+          "J2",
+          "Presence",
+          "Badge",
+          "Inscription",
+        ]],
+        body: participantExportRows.map((participant) => [
+          participant["Nom complet"],
+          participant.Email,
+          participant.Téléphone,
+          participant.Entreprise,
+          participant.Fonction,
+          participant.Secteur,
+          participant["Jour 1"],
+          participant["Jour 2"],
+          participant.Présence,
+          participant["Badge téléchargé"],
+          participant["Date inscription"],
+        ]),
+        styles: {
+          fontSize: 7,
+          cellPadding: 1.5,
+          overflow: "linebreak",
+          valign: "middle",
+        },
+        headStyles: {
+          fillColor: [37, 99, 235],
+          textColor: 255,
+          fontStyle: "bold",
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+        columnStyles: {
+          0: { cellWidth: 30 },
+          1: { cellWidth: 44 },
+          2: { cellWidth: 23 },
+          3: { cellWidth: 26 },
+          4: { cellWidth: 28 },
+          5: { cellWidth: 24 },
+          6: { cellWidth: 8, halign: "center" },
+          7: { cellWidth: 8, halign: "center" },
+          8: { cellWidth: 14, halign: "center" },
+          9: { cellWidth: 14, halign: "center" },
+          10: { cellWidth: 24 },
+        },
+        margin: { left: 10, right: 10 },
+      });
+
+      pdf.save(`participants-complet-${exportDate}.pdf`);
+    } catch (error) {
+      console.error("Participants PDF export failed", error);
+      setExportErrorMessage("Impossible de telecharger la liste des participants en PDF pour le moment.");
+    } finally {
+      setIsExportingPdf(false);
+    }
+  }, [participantExportRows]);
+
+  const handleDownloadParticipantsExcel = useCallback(async () => {
+    if (participantExportRows.length === 0) {
+      setExportErrorMessage("Aucun participant à exporter au format Excel.");
+      return;
+    }
+
+    try {
+      setIsExportingExcel(true);
+      setExportErrorMessage(null);
+
+      const { utils, writeFileXLSX } = await import("xlsx");
+      const workbook = utils.book_new();
+      const worksheet = utils.json_to_sheet(participantExportRows);
+
+      worksheet["!cols"] = [
+        { wch: 28 },
+        { wch: 30 },
+        { wch: 18 },
+        { wch: 24 },
+        { wch: 24 },
+        { wch: 18 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 12 },
+        { wch: 18 },
+        { wch: 24 },
+        { wch: 22 },
+      ];
+
+      utils.book_append_sheet(workbook, worksheet, "Participants");
+
+      const exportDate = new Date().toISOString().slice(0, 10);
+
+      writeFileXLSX(workbook, `participants-complet-${exportDate}.xlsx`);
+    } catch (error) {
+      console.error("Participants Excel export failed", error);
+      setExportErrorMessage("Impossible de telecharger la liste des participants en Excel pour le moment.");
+    } finally {
+      setIsExportingExcel(false);
+    }
+  }, [participantExportRows]);
+
   if (checkingAuth) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -358,9 +533,34 @@ export default function AdminDashboard() {
                 </button>
               ))}
             </div>
-            <Button variant="outline" size="sm" onClick={refreshData} className="gap-2 text-slate-500">
-              <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Actualiser
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              {activeTab === "participants" ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownloadParticipantsExcel}
+                    disabled={isExportingExcel || participants.length === 0}
+                    className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+                  >
+                    {isExportingExcel ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />}
+                    Excel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleDownloadParticipantsPdf}
+                    disabled={isExportingPdf || participants.length === 0}
+                    className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                    PDF
+                  </Button>
+                </>
+              ) : null}
+              <Button variant="outline" size="sm" onClick={refreshData} className="gap-2 text-slate-500">
+                <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Actualiser
+              </Button>
+            </div>
           </div>
 
           {/* Search + filters */}
@@ -390,6 +590,10 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
+
+          {exportErrorMessage ? (
+            <p className="border-b border-slate-100 px-6 py-3 text-sm text-red-600">{exportErrorMessage}</p>
+          ) : null}
 
           {/* TABLE CONTENT */}
           {loading ? (

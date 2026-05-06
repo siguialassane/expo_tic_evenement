@@ -323,55 +323,58 @@ export default function AdminBadgesPage() {
         </section>
 
         <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white lg:h-[calc(100vh-8rem)]">
-          {selectedParticipant ? (
-            <div className="flex h-full w-full flex-col">
-              <div className="flex items-center justify-end border-b border-slate-200 px-6 py-4">
-                <Button
-                  onClick={handleDownloadPdf}
-                  disabled={isExportingPdf}
-                  className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
-                >
-                  {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                  Télécharger PDF A4
-                </Button>
-              </div>
+          <div className="flex h-full w-full flex-col">
+            <div className="flex flex-wrap items-center justify-end gap-3 border-b border-slate-200 px-6 py-4">
+              <Button
+                onClick={handleDownloadPdf}
+                disabled={isExportingPdf || !selectedParticipant}
+                className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
+              >
+                {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                Télécharger le badge PDF
+              </Button>
+            </div>
 
-              <div className="flex min-h-0 flex-1 items-center justify-center bg-[linear-gradient(180deg,#ffffff_0%,#f6faf7_100%)] p-6 xl:p-8">
-                <div className="flex h-full w-full items-center justify-center rounded-[28px] border border-slate-200 bg-slate-50/70 p-6">
-                  <div className="w-full max-w-[430px]">
-                    <ParticipantBadgePreview
-                      firstName={selectedParticipant.first_name}
-                      lastName={selectedParticipant.last_name}
-                      role={selectedParticipant.fonction}
-                    />
+            {selectedParticipant ? (
+              <>
+                <div className="flex min-h-0 flex-1 items-center justify-center bg-[linear-gradient(180deg,#ffffff_0%,#f6faf7_100%)] p-6 xl:p-8">
+                  <div className="flex h-full w-full items-center justify-center rounded-[28px] border border-slate-200 bg-slate-50/70 p-6">
+                    <div className="w-full max-w-[430px]">
+                      <ParticipantBadgePreview
+                        firstName={selectedParticipant.first_name}
+                        lastName={selectedParticipant.last_name}
+                        role={selectedParticipant.fonction}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="absolute -left-[9999px] top-0">
-                <div
-                  ref={pdfBadgeSheetRef}
-                  className="relative aspect-[210/297] w-[1240px] overflow-hidden bg-white"
-                >
-                  <div className="absolute left-0 top-0 w-1/2 origin-top-left">
-                    <ParticipantBadgePreview
-                      firstName={selectedParticipant.first_name}
-                      lastName={selectedParticipant.last_name}
-                      role={selectedParticipant.fonction}
-                    />
+                <div className="absolute -left-[9999px] top-0">
+                  <div
+                    ref={pdfBadgeSheetRef}
+                    className="relative aspect-[210/297] w-[1240px] overflow-hidden bg-white"
+                  >
+                    <div className="absolute left-0 top-0 w-1/2 origin-top-left">
+                      <ParticipantBadgePreview
+                        firstName={selectedParticipant.first_name}
+                        lastName={selectedParticipant.last_name}
+                        role={selectedParticipant.fonction}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {exportErrorMessage ? (
-                <p className="px-6 pb-4 text-sm text-red-600">{exportErrorMessage}</p>
-              ) : null}
-            </div>
-          ) : (
-            <div className="px-6 py-14 text-center text-sm text-slate-500">
-              Sélectionnez un participant à gauche pour afficher son badge.
-            </div>
-          )}
+              </>
+            ) : (
+              <div className="px-6 py-14 text-center text-sm text-slate-500">
+                Sélectionnez un participant à gauche pour afficher son badge.
+              </div>
+            )}
+
+            {exportErrorMessage ? (
+              <p className="px-6 pb-4 text-sm text-red-600">{exportErrorMessage}</p>
+            ) : null}
+          </div>
         </section>
       </div>
     </AdminShell>
